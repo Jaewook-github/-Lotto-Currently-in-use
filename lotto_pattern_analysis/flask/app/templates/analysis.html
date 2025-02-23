@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}상세 분석{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- 종합 통계 -->
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">종합 통계</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>분석 항목</th>
+                                <th>값</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for index, row in stats_df.iterrows() %}
+                            <tr>
+                                <td>{{ row['분석 항목'] }}</td>
+                                <td>{{ row['값'] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 각종 분석 결과 -->
+    {% for key, df in freq_dfs.items() %}
+    {% if key != 'color_comb_freq' %}  {# 색상 조합은 별도 처리 #}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ df.index.name }} 분석</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>{{ df.index.name }}</th>
+                                <th>출현 횟수</th>
+                                <th>비율(%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for idx, row in df.iterrows() %}
+                            <tr>
+                                <td>{{ idx }}</td>
+                                <td>{{ row['출현 횟수'] }}</td>
+                                <td>{{ "%.2f"|format(row['비율(%)']) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <!-- 색상 조합 패턴 -->
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">색상 조합 패턴 분석</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>색상 조합</th>
+                                <th>출현 횟수</th>
+                                <th>비율(%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for idx, row in freq_dfs['color_comb_freq'].iterrows() %}
+                            <tr>
+                                <td>{{ idx }}</td>
+                                <td>{{ row['출현 횟수'] }}</td>
+                                <td>{{ "%.2f"|format(row['비율(%)']) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// 차트 관련 JavaScript 코드를 여기에 추가할 수 있습니다.
+</script>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}홈{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- 요약 통계 -->
+    <div class="col-md-12 mb-4">
+        <div class="card-group">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">총 분석 회차</h5>
+                    <p class="card-text display-4">{{ summary_stats.total_draws }}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">평균 AC 값</h5>
+                    <p class="card-text display-4">{{ "%.2f"|format(summary_stats.avg_ac) }}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">평균 소수 개수</h5>
+                    <p class="card-text display-4">{{ "%.2f"|format(summary_stats.avg_prime) }}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">평균 합성수 개수</h5>
+                    <p class="card-text display-4">{{ "%.2f"|format(summary_stats.avg_composite) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 최근 당첨번호 -->
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>최근 당첨번호</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>회차</th>
+                                <th>당첨번호</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for draw in latest_numbers %}
+                            <tr>
+                                <td>{{ draw.draw_number }}</td>
+                                <td>
+                                    <span class="badge bg-primary">{{ draw.num1 }}</span>
+                                    <span class="badge bg-primary">{{ draw.num2 }}</span>
+                                    <span class="badge bg-primary">{{ draw.num3 }}</span>
+                                    <span class="badge bg-primary">{{ draw.num4 }}</span>
+                                    <span class="badge bg-primary">{{ draw.num5 }}</span>
+                                    <span class="badge bg-primary">{{ draw.num6 }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

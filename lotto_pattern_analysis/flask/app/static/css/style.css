@@ -1,0 +1,40 @@
+/* Custom styles */
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.badge {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin: 0 0.2rem;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 4px rgba(0,0,0,.05);
+}
+
+.table-responsive {
+    max-height: 500px;
+    overflow-y: auto;
+}
