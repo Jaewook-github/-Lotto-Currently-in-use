@@ -1,0 +1,18 @@
+[2025-02-15 14:48:12] INFO: Application started successfully
+[2025-02-15 14:48:32] INFO: Starting prediction process
+[2025-02-15 14:48:32] INFO: Database connected successfully
+[2025-02-15 14:48:32] INFO: Retrieving 200 historical data
+[2025-02-15 14:48:32] INFO: Retrieved 200 records
+[2025-02-15 14:48:32] INFO: 학습 설정: 최근 200회차, 반복 횟수: 100
+[2025-02-15 14:48:32] INFO: 
+=== 959회차 학습 시작 ===
+[2025-02-15 14:48:32] INFO: 실제 당첨번호: [1, 14, 15, 24, 40, 41]
+[2025-02-15 14:48:32] ERROR: Prediction process error
+Traceback (most recent call last):
+  File "G:\program\python\tensorflow\lotto\lotto_Reinforcement_20241127\main_1.py", line 696, in _prediction_thread
+    best_state = self.analyzer.get_state()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\program\python\tensorflow\lotto\lotto_Reinforcement_20241127\main_1.py", line 318, in get_state
+    return ModelState(
+           ^^^^^^^^^^^
+TypeError: ModelState() takes no arguments
