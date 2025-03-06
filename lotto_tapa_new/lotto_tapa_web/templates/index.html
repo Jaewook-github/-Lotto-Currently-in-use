@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로또 타파 분석기</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="side-menu">
+        <div class="logo-section">
+            <h2>로또타파</h2>
+        </div>
+        <ul class="menu-items">
+            <li class="active" data-tab="main">
+                <i class="fa-solid fa-home"></i> 메인
+            </li>
+            <li data-tab="rules">
+                <i class="fa-solid fa-list-check"></i> 규칙 선택
+            </li>
+            <li data-tab="settings">
+                <i class="fa-solid fa-gear"></i> 상세 설정
+            </li>
+            <li data-tab="stats">
+                <i class="fa-solid fa-chart-line"></i> 통계 분석
+            </li>
+            <li data-tab="help">
+                <i class="fa-solid fa-circle-question"></i> 도움말
+            </li>
+        </ul>
+        <div class="bottom-info">
+            <p>&copy; 2025 로또타파</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <div class="header-title">
+                <h1>로또 타파 분석기</h1>
+                <p>과학적 패턴 분석을 통한 로또 번호 생성</p>
+            </div>
+            <div class="header-actions">
+                <button id="themeToggle" class="btn"><i class="fa-solid fa-moon"></i></button>
+            </div>
+        </header>
+
+        <!-- 메인 컨텐츠 영역 -->
+        <div class="content-section">
+            <!-- 메인 탭 -->
+            <div class="tab-content active" id="main">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card main-card">
+                            <div class="card-header">
+                                <h5><i class="fa-solid fa-random"></i> 번호 생성</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="generateForm">
+                                    <div class="mb-3">
+                                        <label for="gamesCount" class="form-label">생성할 게임 수:</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa-solid fa-gamepad"></i></span>
+                                            <input type="number" class="form-control" id="gamesCount" name="games_count" min="1" max="10" value="5">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fa-solid fa-bolt"></i> 번호 생성</button>
+                                </form>
+
+                                <div class="mt-4">
+                                    <h5>생성 결과</h5>
+                                    <div id="generationTime" class="text-muted mb-2"></div>
+                                    <div id="resultContainer" class="result-container">
+                                        <p class="text-center text-muted">번호를 생성하면 여기에 표시됩니다.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card stat-card">
+                            <div class="card-header">
+                                <h5><i class="fa-solid fa-chart-simple"></i> 최근 당첨 통계</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="stat-item">
+                                    <span>최근 출현 빈도 TOP 5</span>
+                                    <div class="number-freq">
+                                        <div class="number-ball ball-yellow">7</div>
+                                        <div class="number-ball ball-blue">12</div>
+                                        <div class="number-ball ball-red">25</div>
+                                        <div class="number-ball ball-gray">34</div>
+                                        <div class="number-ball ball-green">43</div>
+                                    </div>
+                                </div>
+                                <div class="stat-chart mt-3">
+                                    <canvas id="numberFrequencyChart"></canvas>
+                                </div>
+                                <div class="stat-item mt-3">
+                                    <span>홀짝 비율</span>
+                                    <div class="pie-container">
+                                        <canvas id="oddEvenChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fa-solid fa-chart-pie"></i> 로또 번호 분포 분석</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="numberDistributionChart" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 규칙 선택 탭 -->
+            <div class="tab-content" id="rules">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fa-solid fa-list-check"></i> 적용할 규칙 선택</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="rulesForm">
+                            <div class="rule-header">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="allRules" checked>
+                                    <label class="form-check-label" for="allRules">
+                                        <strong>전체 선택/해제</strong>
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> 설정 저장</button>
+                            </div>
+
+                            <hr>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_sum_range" id="ruleSumRange" checked>
+                                            <label class="form-check-label" for="ruleSumRange">
+                                                1. 총합 구간 (100~175)
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            선택된 6개 번호의 총합이 이 구간에 있어야 합니다.
+                                        </div>
+                                    </div>
+
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_ac_value" id="ruleAcValue" checked>
+                                            <label class="form-check-label" for="ruleAcValue">
+                                                2. AC값 (7 이상)
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            번호들 간의 차이값의 고유한 개수로 계산
+                                        </div>
+                                    </div>
+
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_odd_even" id="ruleOddEven" checked>
+                                            <label class="form-check-label" for="ruleOddEven">
+                                                3. 홀짝 비율
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            홀수와 짝수의 분포 비율
+                                        </div>
+                                    </div>
+
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_high_low" id="ruleHighLow" checked>
+                                            <label class="form-check-label" for="ruleHighLow">
+                                                4. 고저 비율
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            1~22와 23~45 사이의 번호 분포 비율
+                                        </div>
+                                    </div>
+
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_prime" id="rulePrime" checked>
+                                            <label class="form-check-label" for="rulePrime">
+                                                5. 소수 개수
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            소수 번호(2,3,5,7,...)의 개수 제한
+                                        </div>
+                                    </div>
+
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_composite" id="ruleComposite" checked>
+                                            <label class="form-check-label" for="ruleComposite">
+                                                6. 합성수 개수
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            합성수 번호의 개수 제한
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_last_digit" id="ruleLastDigit" checked>
+                                            <label class="form-check-label" for="ruleLastDigit">
+                                                7. 끝수 총합
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            각 번호의 일의 자리 숫자 합
+                                        </div>
+                                    </div>
+
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_multiples" id="ruleMultiples" checked>
+                                            <label class="form-check-label" for="ruleMultiples">
+                                                8. 3,5의 배수
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            3의 배수와 5의 배수 숫자의 개수 제한
+                                        </div>
+                                    </div>
+
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_perfect_square" id="rulePerfectSquare" checked>
+                                            <label class="form-check-label" for="rulePerfectSquare">
+                                                9. 제곱수
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            제곱수(1,4,9,16,25,36)의 개수 제한
+                                        </div>
+                                    </div>
+
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_consecutive" id="ruleConsecutive" checked>
+                                            <label class="form-check-label" for="ruleConsecutive">
+                                                10. 연속번호
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            연속된 번호 쌍의 개수 제한
+                                        </div>
+                                    </div>
+
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_twin" id="ruleTwin" checked>
+                                            <label class="form-check-label" for="ruleTwin">
+                                                11. 쌍수
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            쌍수(11,22,33,44)의 개수 제한
+                                        </div>
+                                    </div>
+
+                                    <div class="rule-item">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rule-checkbox" type="checkbox" name="rule_corner" id="ruleCorner" checked>
+                                            <label class="form-check-label" for="ruleCorner">
+                                                12. 모서리 패턴
+                                            </label>
+                                        </div>
+                                        <div class="rule-desc">
+                                            로또용지 모서리에 있는 번호들의 분포 제한
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상세 설정 탭 -->
+            <div class="tab-content" id="settings">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fa-solid fa-sliders"></i> 규칙별 상세 설정</h5>
+                        <button id="resetConfig" class="btn btn-outline-danger"><i class="fa-solid fa-rotate"></i> 기본값으로 복원</button>
+                    </div>
+                    <div class="card-body">
+                        <form id="settingsForm">
+                            <!-- 기본 설정 -->
+                            <div class="setting-section mb-4">
+                                <h5 class="section-title"><i class="fa-solid fa-cog"></i> 기본 설정</h5>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">총합 구간:</label>
+                                    <div class="setting-control range-control">
+                                        <input type="number" class="form-control" name="sum_min" id="sumMin" min="21" max="279" value="100">
+                                        <span class="range-separator">~</span>
+                                        <input type="number" class="form-control" name="sum_max" id="sumMax" min="21" max="279" value="175">
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">최소 AC값:</label>
+                                    <div class="setting-control">
+                                        <input type="number" class="form-control" name="ac_value_min" id="acValueMin" min="0" max="15" value="7">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 비율 설정 -->
+                            <div class="setting-section mb-4">
+                                <h5 class="section-title"><i class="fa-solid fa-balance-scale"></i> 비율 설정</h5>
+
+                                <div class="alert alert-info">
+                                    홀짝 비율과 고저 비율에서 6:0 또는 0:6 비율은 자동으로 제외됩니다.
+                                </div>
+                            </div>
+
+                            <!-- 개수 설정 -->
+                            <div class="setting-section mb-4">
+                                <h5 class="section-title"><i class="fa-solid fa-hashtag"></i> 개수 설정</h5>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">소수 개수:</label>
+                                    <div class="setting-control range-control">
+                                        <input type="number" class="form-control" name="prime_min" id="primeMin" min="0" max="6" value="0">
+                                        <span class="range-separator">~</span>
+                                        <input type="number" class="form-control" name="prime_max" id="primeMax" min="0" max="6" value="3">
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">합성수 개수:</label>
+                                    <div class="setting-control range-control">
+                                        <input type="number" class="form-control" name="composite_min" id="compositeMin" min="0" max="6" value="0">
+                                        <span class="range-separator">~</span>
+                                        <input type="number" class="form-control" name="composite_max" id="compositeMax" min="0" max="6" value="3">
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">끝수 총합 구간:</label>
+                                    <div class="setting-control range-control">
+                                        <input type="number" class="form-control" name="last_digit_min" id="lastDigitMin" min="0" max="54" value="15">
+                                        <span class="range-separator">~</span>
+                                        <input type="number" class="form-control" name="last_digit_max" id="lastDigitMax" min="0" max="54" value="35">
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">3의 배수 개수:</label>
+                                    <div class="setting-control range-control">
+                                        <input type="number" class="form-control" name="mult3_min" id="mult3Min" min="0" max="6" value="0">
+                                        <span class="range-separator">~</span>
+                                        <input type="number" class="form-control" name="mult3_max" id="mult3Max" min="0" max="6" value="3">
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">5의 배수 개수:</label>
+                                    <div class="setting-control range-control">
+                                        <input type="number" class="form-control" name="mult5_min" id="mult5Min" min="0" max="6" value="0">
+                                        <span class="range-separator">~</span>
+                                        <input type="number" class="form-control" name="mult5_max" id="mult5Max" min="0" max="6" value="2">
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">제곱수 개수:</label>
+                                    <div class="setting-control range-control">
+                                        <input type="number" class="form-control" name="square_min" id="squareMin" min="0" max="6" value="0">
+                                        <span class="range-separator">~</span>
+                                        <input type="number" class="form-control" name="square_max" id="squareMax" min="0" max="6" value="1">
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">연속번호 쌍 개수:</label>
+                                    <div class="setting-control checkbox-group">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" name="consecutive" id="consecutive0" value="0" checked>
+                                            <label class="form-check-label" for="consecutive0">0개</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" name="consecutive" id="consecutive1" value="1" checked>
+                                            <label class="form-check-label" for="consecutive1">1개</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" name="consecutive" id="consecutive2" value="2" checked>
+                                            <label class="form-check-label" for="consecutive2">2개</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">쌍수 개수:</label>
+                                    <div class="setting-control range-control">
+                                        <input type="number" class="form-control" name="twin_min" id="twinMin" min="0" max="4" value="0">
+                                        <span class="range-separator">~</span>
+                                        <input type="number" class="form-control" name="twin_max" id="twinMax" min="0" max="4" value="2">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 모서리 패턴 설정 -->
+                            <div class="setting-section mb-4">
+                                <h5 class="section-title"><i class="fa-solid fa-border-all"></i> 모서리 패턴 설정</h5>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">모서리 숫자 개수:</label>
+                                    <div class="setting-control range-control">
+                                        <input type="number" class="form-control" name="corner_min" id="cornerMin" min="0" max="6" value="1">
+                                        <span class="range-separator">~</span>
+                                        <input type="number" class="form-control" name="corner_max" id="cornerMax" min="0" max="6" value="4">
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">한 모서리 최대 숫자:</label>
+                                    <div class="setting-control">
+                                        <input type="number" class="form-control" name="corner_max_per_side" id="cornerMaxPerSide" min="0" max="4" value="2">
+                                    </div>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label class="setting-label">대각선 최대 차이:</label>
+                                    <div class="setting-control">
+                                        <input type="number" class="form-control" name="corner_diagonal_diff" id="cornerDiagonalDiff" min="0" max="4" value="2">
+                                    </div>
+                                </div>
+
+                                <div class="corner-info mt-3">
+                                    <div class="corner-header">모서리 패턴 레이아웃</div>
+                                    <div class="corner-layout">
+                                        <div class="corner-grid">
+                                            <div class="corner tl">
+                                                <div>1</div><div>2</div>
+                                                <div>8</div><div>9</div>
+                                            </div>
+                                            <div class="corner tr">
+                                                <div>6</div><div>7</div>
+                                                <div>13</div><div>14</div>
+                                            </div>
+                                            <div class="corner bl">
+                                                <div>29</div><div>30</div>
+                                                <div>36</div><div>37</div>
+                                            </div>
+                                            <div class="corner br">
+                                                <div>34</div><div>35</div>
+                                                <div>41</div><div>42</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-lg"><i class="fa-solid fa-save"></i> 설정 저장</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 통계 분석 탭 -->
+            <div class="tab-content" id="stats">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fa-solid fa-chart-line"></i> 통계 분석</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="stat-section">
+                                    <h5>번호별 출현 빈도</h5>
+                                    <canvas id="numberFrequencyChartFull" height="250"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stat-section">
+                                    <h5>최근 10회차 당첨번호 분포</h5>
+                                    <div class="recent-draws">
+                                        <div class="draw-row">
+                                            <div class="draw-number">1000회</div>
+                                            <div class="draw-balls">
+                                                <div class="number-ball ball-yellow">3</div>
+                                                <div class="number-ball ball-blue">12</div>
+                                                <div class="number-ball ball-blue">15</div>
+                                                <div class="number-ball ball-red">26</div>
+                                                <div class="number-ball ball-gray">32</div>
+                                                <div class="number-ball ball-green">43</div>
+                                            </div>
+                                        </div>
+                                        <div class="draw-row">
+                                            <div class="draw-number">999회</div>
+                                            <div class="draw-balls">
+                                                <div class="number-ball ball-yellow">7</div>
+                                                <div class="number-ball ball-blue">16</div>
+                                                <div class="number-ball ball-red">24</div>
+                                                <div class="number-ball ball-red">25</div>
+                                                <div class="number-ball ball-gray">37</div>
+                                                <div class="number-ball ball-green">44</div>
+                                            </div>
+                                        </div>
+                                        <div class="draw-row">
+                                            <div class="draw-number">998회</div>
+                                            <div class="draw-balls">
+                                                <div class="number-ball ball-yellow">2</div>
+                                                <div class="number-ball ball-yellow">9</div>
+                                                <div class="number-ball ball-blue">19</div>
+                                                <div class="number-ball ball-red">26</div>
+                                                <div class="number-ball ball-gray">32</div>
+                                                <div class="number-ball ball-gray">38</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <div class="stat-section">
+                                    <h5>홀짝 비율 분포</h5>
+                                    <canvas id="oddEvenDistChart" height="200"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-section">
+                                    <h5>고저 비율 분포</h5>
+                                    <canvas id="highLowDistChart" height="200"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-section">
+                                    <h5>AC값 분포</h5>
+                                    <canvas id="acValueChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="stat-section">
+                                    <h5>당첨번호 총합 추이</h5>
+                                    <canvas id="sumTrendChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 도움말 탭 -->
+            <div class="tab-content" id="help">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fa-solid fa-circle-question"></i> 로또 타파 분석법 도움말</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="help-section">
+                            <div class="help-item">
+                                <h5>1. 총합구간 (100 ~ 175)</h5>
+                                <div class="help-content">
+                                    <p>선택된 6개 번호의 총합이 이 구간에 있어야 합니다.</p>
+                                    <p class="badge bg-info">출현 확률 90% 이상</p>
+                                    <div class="help-chart">
+                                        <canvas id="sumRangeHelpChart" height="120"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>2. AC값 (7 이상)</h5>
+                                <div class="help-content">
+                                    <p>번호들 간의 차이값의 고유한 개수로 계산</p>
+                                    <p class="badge bg-info">출현 확률 80% 이상 (8)</p>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>3. 홀짝 비율 분석</h5>
+                                <div class="help-content">
+                                    <p>- 제외 조건: 6:0 또는 0:6 비율 제외</p>
+                                    <p>- 설명: 홀수와 짝수의 분포 비율</p>
+                                    <p>- 권장: 3:3, 4:2, 2:4 비율 추천 (3:3)</p>
+                                    <div class="help-chart">
+                                        <canvas id="oddEvenHelpChart" height="120"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>4. 고저 비율 분석</h5>
+                                <div class="help-content">
+                                    <p>- 기준: 23을 기준으로 고저 구분</p>
+                                    <p>- 제외 조건: 6:0 또는 0:6 비율 제외</p>
+                                    <p>- 권장: 3:3, 4:2, 2:4 비율 추천 (3:3)</p>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>5. 소수 분석</h5>
+                                <div class="help-content">
+                                    <p>- 소수 번호: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43</p>
+                                    <p>- 권장 개수: 1 ~ 3개</p>
+                                    <p>- 근거: 4개 이상 포함 시 당첨 확률 1% 미만</p>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>6. 합성수 분석</h5>
+                                <div class="help-content">
+                                    <p>- 합성수 번호: 1, 4, 8, 10, 14, 16, 20, 22, 25, 26, 28, 32, 34, 35, 38, 40, 44</p>
+                                    <p>- 권장 개수: 1 ~ 4개</p>
+                                    <p>- 근거: 5개 이상 포함 시 당첨 확률 10% 미만</p>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>7. 끝수 분석</h5>
+                                <div class="help-content">
+                                    <p>- 범위: 15~35</p>
+                                    <p>- 설명: 각 번호의 일의 자리 숫자 합</p>
+                                    <p>- 계산 방법:</p>
+                                    <p>&nbsp;&nbsp;- 한 자리 수는 그대로 사용</p>
+                                    <p>&nbsp;&nbsp;- 두 자리 수는 끝자리만 사용</p>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>8. 배수 분석</h5>
+                                <div class="help-content">
+                                    <p>- 3의 배수: 1~3개 권장</p>
+                                    <p>- 5의 배수: 0~2개 권장</p>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>9. 제곱수 분석</h5>
+                                <div class="help-content">
+                                    <p>- 제곱수 번호: 1, 4, 9, 16, 25, 36</p>
+                                    <p>- 권장 개수: 0~1개</p>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>10. 연속수 분석</h5>
+                                <div class="help-content">
+                                    <p>- 권장 패턴: (0 ~ 1)</p>
+                                    <p>&nbsp;&nbsp;- 연속번호 없음</p>
+                                    <p>&nbsp;&nbsp;- 2연속 1쌍</p>
+                                    <p>&nbsp;&nbsp;- 2연속 2쌍</p>
+                                    <p>- 예시:</p>
+                                    <p>&nbsp;&nbsp;- 1,2 (2연속 1쌍)</p>
+                                    <p>&nbsp;&nbsp;- 1,2,8,9 (2연속 2쌍)</p>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>11. 쌍수 분석</h5>
+                                <div class="help-content">
+                                    <p>- 쌍수 번호: 11, 22, 33, 44</p>
+                                    <p>- 권장 개수: 0~2개 (0 ~ 1)</p>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <h5>12. 모서리 패턴 분석</h5>
+                                <div class="help-content">
+                                    <p>- 대상 영역:</p>
+                                    <p>&nbsp;&nbsp;- 좌측 상단: 1, 2, 8, 9</p>
+                                    <p>&nbsp;&nbsp;- 우측 상단: 6, 7, 13, 14</p>
+                                    <p>&nbsp;&nbsp;- 좌측 하단: 29, 30, 36, 37</p>
+                                    <p>&nbsp;&nbsp;- 우측 하단: 34, 35, 41, 42</p>
+                                    <p>- 권장 개수: 1~4개</p>
+                                    <p>- 추가 규칙:</p>
+                                    <p>&nbsp;&nbsp;- 한 모서리당 최대 2개</p>
+                                    <p>&nbsp;&nbsp;- 대각선 방향 차이 2 이하</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 알림 모달 -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalTitle">알림</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="alertModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+</body>
+</html>
