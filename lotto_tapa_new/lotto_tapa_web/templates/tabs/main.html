@@ -1,0 +1,155 @@
+<!-- 메인 탭 -->
+<div class="tab-content active" id="main">
+    <div class="main-welcome">
+        <h2 class="main-header">로또 타파 분석기에 오신 것을 환영합니다</h2>
+        <p class="main-subheader">과학적 패턴 분석으로 더 나은 로또 번호를 생성하세요</p>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="card main-card">
+                <div class="card-header">
+                    <h5><i class="fa-solid fa-random"></i> 번호 생성</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <form id="generateForm">
+                                <div class="mb-3">
+                                    <label for="gamesCount" class="form-label">생성할 게임 수:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa-solid fa-gamepad"></i></span>
+                                        <input type="number" class="form-control" id="gamesCount" name="games_count" min="1" max="10" value="5">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fa-solid fa-bolt"></i> 번호 생성</button>
+                            </form>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="generation-info">
+                                <h6><i class="fa-solid fa-info-circle"></i> 생성 옵션</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="excludePastNumbers" checked>
+                                    <label class="form-check-label" for="excludePastNumbers">
+                                        이전 당첨번호 제외
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="useStatistics" checked>
+                                    <label class="form-check-label" for="useStatistics">
+                                        통계 기반 분석 적용
+                                    </label>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="#rules" class="btn btn-sm btn-outline-primary" data-tab-link="rules">
+                                        규칙 설정 변경 <i class="fa-solid fa-angle-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-section">
+                        <h5>생성 결과</h5>
+                        <div id="generationTime" class="text-muted mb-2"></div>
+                        <div id="resultContainer" class="result-container">
+                            <p class="text-center text-muted">번호를 생성하면 여기에 표시됩니다.</p>
+
+                            <!-- 초기 샘플 결과 (사용자 경험 향상을 위해) -->
+                            <div class="sample-result">
+                                <div class="game-row sample">
+                                    <div class="game-info">예시:</div>
+                                    <div class="game-balls">
+                                        <div class="number-ball ball-yellow">7</div>
+                                        <div class="number-ball ball-blue">15</div>
+                                        <div class="number-ball ball-red">23</div>
+                                        <div class="number-ball ball-red">28</div>
+                                        <div class="number-ball ball-gray">36</div>
+                                        <div class="number-ball ball-green">42</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card stat-card">
+                <div class="card-header">
+                    <h5><i class="fa-solid fa-chart-simple"></i> 최근 당첨 통계</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-item">
+                        <span>최근 출현 빈도 TOP 5</span>
+                        <div class="number-freq">
+                            <div class="number-ball ball-yellow">7</div>
+                            <div class="number-ball ball-blue">12</div>
+                            <div class="number-ball ball-red">25</div>
+                            <div class="number-ball ball-gray">34</div>
+                            <div class="number-ball ball-green">43</div>
+                        </div>
+                    </div>
+                    <div class="stat-chart mt-3">
+                        <canvas id="numberFrequencyChart"></canvas>
+                    </div>
+                    <div class="stat-item mt-3">
+                        <span>홀짝 비율</span>
+                        <div class="pie-container">
+                            <canvas id="oddEvenChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                        <a href="#stats" class="btn btn-sm btn-outline-primary" data-tab-link="stats">
+                            더 많은 통계 보기 <i class="fa-solid fa-angle-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 최근 당첨번호 표시 -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fa-solid fa-trophy"></i> 최근 당첨번호</h5>
+                </div>
+                <div class="card-body">
+                    <div class="latest-draw">
+                        <div class="latest-draw-number">
+                            <span id="latestDrawNo">{{ recent_draw.draw_number }}</span>회
+                            <!-- 날짜 형식은 적절히 조정 필요 -->
+                        </div>
+                        <div class="latest-draw-balls">
+                            {% for num in recent_draw.numbers %}
+                                {% if num <= 10 %}
+                                    <div class="number-ball ball-yellow">{{ num }}</div>
+                                {% elif num <= 20 %}
+                                    <div class="number-ball ball-blue">{{ num }}</div>
+                                {% elif num <= 30 %}
+                                    <div class="number-ball ball-red">{{ num }}</div>
+                                {% elif num <= 40 %}
+                                    <div class="number-ball ball-gray">{{ num }}</div>
+                                {% else %}
+                                    <div class="number-ball ball-green">{{ num }}</div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="number-ball bonus">{{ recent_draw.bonus }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fa-solid fa-chart-pie"></i> 로또 번호 분포 분석</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="numberDistributionChart" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,205 @@
+<!-- 통계 분석 탭 -->
+<div class="tab-content" id="stats">
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="fa-solid fa-chart-line"></i> 통계 분석</h5>
+        </div>
+        <div class="card-body">
+            <!-- 로딩 표시 -->
+            <div id="statsLoading" class="stats-loading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">로딩 중...</span>
+                </div>
+                <p class="mt-2">통계 데이터를 불러오는 중입니다...</p>
+            </div>
+
+            <!-- 에러 표시 -->
+            <div id="statsError" class="stats-error d-none">
+                <div class="alert alert-danger">
+                    <i class="fa-solid fa-exclamation-triangle me-2"></i>
+                    통계 데이터를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.
+                    <button id="retryStatsBtn" class="btn btn-sm btn-danger ms-3">
+                        <i class="fa-solid fa-rotate"></i> 다시 시도
+                    </button>
+                </div>
+            </div>
+
+            <!-- 통계 내용 (처음에는 숨김) -->
+            <div id="statsContent" class="stats-content d-none">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="stat-section">
+                            <h5>번호별 출현 빈도</h5>
+                            <div class="chart-container" style="position: relative; height: 250px;">
+                                <canvas id="numberFrequencyChartFull"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stat-section">
+                            <h5>최근 10회차 당첨번호 분포</h5>
+                            <div class="recent-draws">
+                                <!-- 당첨 번호 예시 (자바스크립트로 교체됨) -->
+                                <div class="draw-row">
+                                    <div class="draw-number">1000회</div>
+                                    <div class="draw-balls">
+                                        <div class="number-ball ball-yellow">3</div>
+                                        <div class="number-ball ball-blue">12</div>
+                                        <div class="number-ball ball-blue">15</div>
+                                        <div class="number-ball ball-red">26</div>
+                                        <div class="number-ball ball-gray">32</div>
+                                        <div class="number-ball ball-green">43</div>
+                                    </div>
+                                </div>
+                                <div class="draw-row">
+                                    <div class="draw-number">999회</div>
+                                    <div class="draw-balls">
+                                        <div class="number-ball ball-yellow">7</div>
+                                        <div class="number-ball ball-blue">16</div>
+                                        <div class="number-ball ball-red">24</div>
+                                        <div class="number-ball ball-red">25</div>
+                                        <div class="number-ball ball-gray">37</div>
+                                        <div class="number-ball ball-green">44</div>
+                                    </div>
+                                </div>
+                                <div class="draw-row">
+                                    <div class="draw-number">998회</div>
+                                    <div class="draw-balls">
+                                        <div class="number-ball ball-yellow">2</div>
+                                        <div class="number-ball ball-yellow">9</div>
+                                        <div class="number-ball ball-blue">19</div>
+                                        <div class="number-ball ball-red">26</div>
+                                        <div class="number-ball ball-gray">32</div>
+                                        <div class="number-ball ball-gray">38</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="stat-section">
+                            <h5>홀짝 비율 분포</h5>
+                            <div class="chart-container" style="position: relative; height: 200px;">
+                                <canvas id="oddEvenDistChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-section">
+                            <h5>고저 비율 분포</h5>
+                            <div class="chart-container" style="position: relative; height: 200px;">
+                                <canvas id="highLowDistChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-section">
+                            <h5>AC값 분포</h5>
+                            <div class="chart-container" style="position: relative; height: 200px;">
+                                <canvas id="acValueChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="stat-section">
+                            <h5>당첨번호 총합 추이</h5>
+                            <div class="chart-container" style="position: relative; height: 200px;">
+                                <canvas id="sumTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fa-solid fa-chart-pie"></i> 당첨 번호 특성 분석</h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>특성</th>
+                                            <th>분석 결과</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>홀짝 비율 평균</td>
+                                            <td id="oddEvenRatioAvg">3.2 : 2.8</td>
+                                        </tr>
+                                        <tr>
+                                            <td>최다 출현 홀짝 패턴</td>
+                                            <td id="topOddEvenPattern">3홀 3짝 (36.4%)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>고저 비율 평균</td>
+                                            <td id="highLowRatioAvg">2.8 : 3.2</td>
+                                        </tr>
+                                        <tr>
+                                            <td>최다 출현 고저 패턴</td>
+                                            <td id="topHighLowPattern">3고 3저 (38.2%)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>연속번호 패턴</td>
+                                            <td id="consecutiveStats">없음(42%), 1쌍(36%), 2쌍(18%)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>평균 AC값</td>
+                                            <td id="avgAcValue">8.6</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fa-solid fa-trophy"></i> 번호별 순위</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>가장 많이 당첨된 번호</h6>
+                                        <ol id="mostFrequentNumbers" class="number-rank-list">
+                                            <li><span class="number-ball ball-yellow mini">7</span> 134회</li>
+                                            <li><span class="number-ball ball-blue mini">12</span> 129회</li>
+                                            <li><span class="number-ball ball-red mini">25</span> 127회</li>
+                                            <li><span class="number-ball ball-gray mini">34</span> 126회</li>
+                                            <li><span class="number-ball ball-green mini">43</span> 124회</li>
+                                        </ol>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>가장 적게 당첨된 번호</h6>
+                                        <ol id="leastFrequentNumbers" class="number-rank-list">
+                                            <li><span class="number-ball ball-blue mini">18</span> 78회</li>
+                                            <li><span class="number-ball ball-yellow mini">8</span> 81회</li>
+                                            <li><span class="number-ball ball-red mini">28</span> 85회</li>
+                                            <li><span class="number-ball ball-gray mini">40</span> 88회</li>
+                                            <li><span class="number-ball ball-yellow mini">4</span> 89회</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <h6>최근 당첨 기간</h6>
+                                    <p id="latestDrawInfo">최신 <span id="latestDrawNumber">1000</span>회 (<span id="latestDrawDate">2023-12-30</span>)</p>
+                                    <div class="alert alert-info">
+                                        <small>매주 일요일에 데이터가 자동으로 업데이트됩니다.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,235 @@
+<!-- 도움말 탭 -->
+<div class="tab-content" id="help">
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="fa-solid fa-circle-question"></i> 로또 타파 분석법 도움말</h5>
+        </div>
+        <div class="card-body">
+            <div class="help-section">
+                <div class="help-item">
+                    <h5>1. 총합구간 (100 ~ 175)</h5>
+                    <div class="help-content">
+                        <p>선택된 6개 번호의 총합이 이 구간에 있어야 합니다.</p>
+                        <p class="badge bg-info">출현 확률 90% 이상</p>
+                        <div class="help-chart">
+                            <canvas id="sumRangeHelpChart" height="120"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>2. AC값 (7 이상)</h5>
+                    <div class="help-content">
+                        <p>번호들 간의 차이값의 고유한 개수로 계산</p>
+                        <p class="badge bg-info">출현 확률 80% 이상 (8)</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>3. 홀짝 비율 분석</h5>
+                    <div class="help-content">
+                        <p>- 제외 조건: 6:0 또는 0:6 비율 제외</p>
+                        <p>- 설명: 홀수와 짝수의 분포 비율</p>
+                        <p>- 권장: 3:3, 4:2, 2:4 비율 추천 (3:3)</p>
+                        <div class="help-chart">
+                            <canvas id="oddEvenHelpChart" height="120"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>4. 고저 비율 분석</h5>
+                    <div class="help-content">
+                        <p>- 기준: 23을 기준으로 고저 구분</p>
+                        <p>- 제외 조건: 6:0 또는 0:6 비율 제외</p>
+                        <p>- 권장: 3:3, 4:2, 2:4 비율 추천 (3:3)</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>5. 소수 분석</h5>
+                    <div class="help-content">
+                        <p>- 소수 번호: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43</p>
+                        <p>- 권장 개수: 1 ~ 3개</p>
+                        <p>- 근거: 4개 이상 포함 시 당첨 확률 1% 미만</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>6. 합성수 분석</h5>
+                    <div class="help-content">
+                        <p>- 합성수 번호: 1, 4, 8, 10, 14, 16, 20, 22, 25, 26, 28, 32, 34, 35, 38, 40, 44</p>
+                        <p>- 권장 개수: 1 ~ 4개</p>
+                        <p>- 근거: 5개 이상 포함 시 당첨 확률 10% 미만</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>7. 끝수 분석</h5>
+                    <div class="help-content">
+                        <p>- 범위: 15~35</p>
+                        <p>- 설명: 각 번호의 일의 자리 숫자 합</p>
+                        <p>- 계산 방법:</p>
+                        <p>&nbsp;&nbsp;- 한 자리 수는 그대로 사용</p>
+                        <p>&nbsp;&nbsp;- 두 자리 수는 끝자리만 사용</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>8. 배수 분석</h5>
+                    <div class="help-content">
+                        <p>- 3의 배수: 1~3개 권장</p>
+                        <p>- 5의 배수: 0~2개 권장</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>9. 제곱수 분석</h5>
+                    <div class="help-content">
+                        <p>- 제곱수 번호: 1, 4, 9, 16, 25, 36</p>
+                        <p>- 권장 개수: 0~1개</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>10. 연속수 분석</h5>
+                    <div class="help-content">
+                        <p>- 권장 패턴: (0 ~ 1)</p>
+                        <p>&nbsp;&nbsp;- 연속번호 없음</p>
+                        <p>&nbsp;&nbsp;- 2연속 1쌍</p>
+                        <p>&nbsp;&nbsp;- 2연속 2쌍</p>
+                        <p>- 예시:</p>
+                        <p>&nbsp;&nbsp;- 1,2 (2연속 1쌍)</p>
+                        <p>&nbsp;&nbsp;- 1,2,8,9 (2연속 2쌍)</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>11. 쌍수 분석</h5>
+                    <div class="help-content">
+                        <p>- 쌍수 번호: 11, 22, 33, 44</p>
+                        <p>- 권장 개수: 0~2개 (0 ~ 1)</p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <h5>12. 모서리 패턴 분석</h5>
+                    <div class="help-content">
+                        <p>- 대상 영역:</p>
+                        <p>&nbsp;&nbsp;- 좌측 상단: 1, 2, 8, 9</p>
+                        <p>&nbsp;&nbsp;- 우측 상단: 6, 7, 13, 14</p>
+                        <p>&nbsp;&nbsp;- 좌측 하단: 29, 30, 36, 37, 43, 44</p>
+                        <p>&nbsp;&nbsp;- 우측 하단: 34, 35, 41, 42</p>
+                        <p>- 권장 개수: 1~4개</p>
+                        <p>- 추가 규칙:</p>
+                        <p>&nbsp;&nbsp;- 한 모서리당 최대 2개</p>
+                        <p>&nbsp;&nbsp;- 대각선 방향 차이 2 이하</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <h4>자주 묻는 질문</h4>
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                로또 타파 분석법은 어떤 원리로 작동하나요?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                로또 타파 분석법은 과거 당첨 번호의 통계적 패턴을 분석하여 12가지 규칙을 도출했습니다.
+                                이 규칙들은 실제 당첨 확률이 높은 번호 조합의 특성을 반영합니다.
+                                사용자는 이 규칙들의 적용 여부와 강도를 조절하여 자신만의 맞춤형 번호를 생성할 수 있습니다.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                모든 규칙을 적용해야 하나요?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                모든 규칙을 적용할 필요는 없습니다. 규칙 선택 탭에서 원하는 규칙만 선택하여 적용할 수 있습니다.
+                                다만, 너무 많은 규칙을 적용하면 조건이 까다로워져 번호 생성이 어려울 수 있으니 균형 있게 선택하는 것이 좋습니다.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                AC값이란 정확히 무엇인가요?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                AC값(Arithmetic Complexity)은 당첨 번호 조합의 복잡도를 측정하는 값입니다.
+                                6개 번호 사이의 모든 차이값을 구한 후, 중복을 제거한 고유한 차이값의 개수에서 5를 뺀 값을 의미합니다.
+                                AC값이 높을수록 번호 사이의 간격이 다양하고 규칙성이 적다는 것을 의미하며,
+                                실제 당첨 번호는 대체로 AC값이 7 이상인 경우가 많습니다.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                이 서비스는 무료인가요?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                네, 로또 타파 웹 서비스는 완전 무료로 제공됩니다. 회원 가입이나 결제 없이 누구나 모든 기능을 자유롭게 이용할 수 있습니다.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                로또 당첨이 보장되나요?
+                            </button>
+                        </h2>
+                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                로또는 기본적으로 확률 게임이므로 당첨을 100% 보장할 수는 없습니다.
+                                로또 타파 분석법은 과거 당첨 번호의 패턴을 분석하여 통계적으로 당첨 확률이 높은 번호를 추천하는 것이지만,
+                                최종 결과는 확률에 의해 결정됩니다. 건전한 구매 습관과 재미로 이용하시기 바랍니다.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                데이터는 얼마나 자주 업데이트되나요?
+                            </button>
+                        </h2>
+                        <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                로또 당첨 번호 데이터는 매주 토요일 추첨 후 일요일에 자동으로 업데이트됩니다.
+                                항상 최신 데이터를 기반으로 통계와 분석이 이루어집니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 p-4 bg-light rounded">
+                <h4>사용 팁</h4>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-light">규칙은 선별적으로 적용하고, 너무 많은 규칙을 동시에 적용하면 번호 생성이 어려워질 수 있습니다.</li>
+                    <li class="list-group-item bg-light">통계 탭에서 최근 당첨 번호 패턴을 분석하고 트렌드를 파악하는 것이 도움이 됩니다.</li>
+                    <li class="list-group-item bg-light">다크 모드 전환 버튼을 사용하여 사용 환경을 변경할 수 있습니다.</li>
+                    <li class="list-group-item bg-light">특정 숫자의 출현 빈도가 낮다고 해서 반드시 다음에 나온다는 보장은 없습니다. 통계는 참고용으로만 활용하세요.</li>
+                    <li class="list-group-item bg-light">자동 생성된 번호를 기반으로 직접 몇 개의 번호를 수정해서 사용하는 것도 좋은 전략입니다.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,173 @@
+<!-- 규칙 선택 탭 -->
+<div class="tab-content" id="rules">
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="fa-solid fa-list-check"></i> 적용할 규칙 선택</h5>
+        </div>
+        <div class="card-body">
+            <form id="rulesForm">
+                <div class="rule-header">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="allRules" checked>
+                        <label class="form-check-label" for="allRules">
+                            <strong>전체 선택/해제</strong>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> 설정 저장</button>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_sum_range" id="ruleSumRange" checked>
+                                <label class="form-check-label" for="ruleSumRange">
+                                    1. 총합 구간 (100~175)
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                선택된 6개 번호의 총합이 이 구간에 있어야 합니다.
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_ac_value" id="ruleAcValue" checked>
+                                <label class="form-check-label" for="ruleAcValue">
+                                    2. AC값 (7 이상)
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                번호들 간의 차이값의 고유한 개수로 계산
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_odd_even" id="ruleOddEven" checked>
+                                <label class="form-check-label" for="ruleOddEven">
+                                    3. 홀짝 비율
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                홀수와 짝수의 분포 비율
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_high_low" id="ruleHighLow" checked>
+                                <label class="form-check-label" for="ruleHighLow">
+                                    4. 고저 비율
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                1~22와 23~45 사이의 번호 분포 비율
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_prime" id="rulePrime" checked>
+                                <label class="form-check-label" for="rulePrime">
+                                    5. 소수 개수
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                소수 번호(2,3,5,7,...)의 개수 제한
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_composite" id="ruleComposite" checked>
+                                <label class="form-check-label" for="ruleComposite">
+                                    6. 합성수 개수
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                합성수 번호의 개수 제한
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_last_digit" id="ruleLastDigit" checked>
+                                <label class="form-check-label" for="ruleLastDigit">
+                                    7. 끝수 총합
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                각 번호의 일의 자리 숫자 합
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_multiples" id="ruleMultiples" checked>
+                                <label class="form-check-label" for="ruleMultiples">
+                                    8. 3,5의 배수
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                3의 배수와 5의 배수 숫자의 개수 제한
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_perfect_square" id="rulePerfectSquare" checked>
+                                <label class="form-check-label" for="rulePerfectSquare">
+                                    9. 제곱수
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                제곱수(1,4,9,16,25,36)의 개수 제한
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_consecutive" id="ruleConsecutive" checked>
+                                <label class="form-check-label" for="ruleConsecutive">
+                                    10. 연속번호
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                연속된 번호 쌍의 개수 제한
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_twin" id="ruleTwin" checked>
+                                <label class="form-check-label" for="ruleTwin">
+                                    11. 쌍수
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                쌍수(11,22,33,44)의 개수 제한
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input rule-checkbox" type="checkbox" name="rule_corner" id="ruleCorner" checked>
+                                <label class="form-check-label" for="ruleCorner">
+                                    12. 모서리 패턴
+                                </label>
+                            </div>
+                            <div class="rule-desc">
+                                로또용지 모서리에 있는 번호들의 분포 제한
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

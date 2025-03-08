@@ -25,7 +25,7 @@ class LottoAnalyzer:
         self.corner_patterns = {
             'top_left': {1, 2, 8, 9},  # 좌측 상단 모서리
             'top_right': {6, 7, 13, 14},  # 우측 상단 모서리
-            'bottom_left': {29, 30, 36, 37},  # 좌측 하단 모서리
+            'bottom_left': {29, 30, 36, 37, 43, 44},  # 좌측 하단 모서리
             'bottom_right': {34, 35, 41, 42}  # 우측 하단 모서리
         }
         # 전체 모서리 숫자 집합

@@ -4,10 +4,15 @@ import uuid
 from datetime import datetime
 from lotto_config import LottoConfig
 from lotto_analyzer import LottoAnalyzer
+from db_util import LottoDatabase
 
 app = Flask(__name__)
 app.secret_key = 'lotto_tapa_secret_key'  # 세션 관리를 위한 비밀키
 app.config['SESSION_TYPE'] = 'filesystem'
+
+# 데이터베이스 초기화
+db = LottoDatabase()
+db.init_db()
 
 
 # 사용자 세션 관리
@@ -25,7 +30,18 @@ def create_session():
 @app.route('/')
 def index():
     """메인 페이지 렌더링"""
-    return render_template('index.html')
+    try:
+        # 최신 회차 정보 가져오기
+        latest_draw = db.get_latest_draw_number()
+        # 최근 당첨번호 가져오기
+        recent_draws = db.get_recent_draws(1)  # 가장 최근 1회차만 가져오기
+
+        return render_template('index.html', latest_draw=latest_draw,
+                               recent_draw=recent_draws[0] if recent_draws else None)
+    except Exception as e:
+        # 오류 발생 시 기본값 사용
+        print(f"오류 발생: {str(e)}")
+        return render_template('index.html', latest_draw="정보 없음", recent_draw=None)
 
 
 @app.route('/generate', methods=['POST'])
@@ -57,6 +73,7 @@ def generate_numbers():
             'timestamp': timestamp
         })
     except Exception as e:
+        print(f"번호 생성 중 오류: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -144,6 +161,7 @@ def update_config():
             'message': '설정이 성공적으로 업데이트되었습니다.'
         })
     except Exception as e:
+        print(f"설정 업데이트 중 오류: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -162,6 +180,7 @@ def reset_config():
             'message': '설정이 기본값으로 초기화되었습니다.'
         })
     except Exception as e:
+        print(f"설정 초기화 중 오류: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -170,55 +189,40 @@ def reset_config():
 
 @app.route('/stats', methods=['GET'])
 def get_stats():
-    """통계 데이터 제공 (샘플 데이터)"""
+    """로또 데이터베이스에서 통계 데이터 조회"""
     try:
-        # 샘플 통계 데이터 (실제 서비스에서는 DB에서 가져와야 함)
-        stats = {
-            'frequency': {
-                'labels': list(range(1, 46)),
-                'data': [random.randint(20, 50) for _ in range(45)]
-            },
-            'odd_even': {
-                'labels': ['홀수', '짝수'],
-                'data': [52, 48]
-            },
-            'high_low': {
-                'labels': ['1~22', '23~45'],
-                'data': [48, 52]
-            },
-            'sum_trend': {
-                'labels': [f'{985 + i}회' for i in range(15)],
-                'data': [random.randint(120, 165) for _ in range(15)]
-            },
-            'recent_draws': [
-                {'round': 1000, 'numbers': [3, 12, 15, 26, 32, 43]},
-                {'round': 999, 'numbers': [7, 16, 24, 25, 37, 44]},
-                {'round': 998, 'numbers': [2, 9, 19, 26, 32, 38]},
-                {'round': 997, 'numbers': [5, 8, 21, 27, 33, 41]},
-                {'round': 996, 'numbers': [1, 10, 17, 29, 34, 40]}
-            ]
-        }
+        # 데이터베이스에서 통계 데이터 가져오기
+        stats = db.get_stats_for_dashboard()
 
         return jsonify({
             'success': True,
             'stats': stats
         })
     except Exception as e:
+        print(f"통계 데이터 조회 중 오류: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
         })
 
 
+@app.route('/offline')
+def offline():
+    """오프라인 페이지"""
+    return render_template('offline.html')
+
+
 @app.errorhandler(404)
 def page_not_found(e):
+    """404 오류 페이지"""
     return render_template('404.html'), 404
 
 
 @app.errorhandler(500)
 def internal_server_error(e):
+    """500 오류 페이지"""
     return render_template('500.html'), 500
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)

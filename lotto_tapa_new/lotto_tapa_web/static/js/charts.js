@@ -25,34 +25,111 @@ document.addEventListener('DOMContentLoaded', function() {
         Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
     }
 
-    // 미니 번호 출현 빈도 차트
-    if (document.getElementById('numberFrequencyChart')) {
-        const ctx = document.getElementById('numberFrequencyChart').getContext('2d');
+    // DB에서 통계 데이터 가져오기
+    fetch('/stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const stats = data.stats;
+                initializeCharts(stats);
+                displayRecentDraws(stats.recent_draws);
+            } else {
+                console.error('통계 데이터를 불러오지 못했습니다:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('통계 데이터 요청 중 오류 발생:', error);
+        });
 
-        // 샘플 데이터 (실제 서비스 구현 시 서버에서 가져온 데이터 사용)
-        const labels = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45];
-        const data = [28, 32, 22, 30, 35, 42, 38, 33, 29, 25];
+    // 모든 차트 초기화
+    function initializeCharts(stats) {
+        createNumberFrequencyChart(stats.frequency);
+        createOddEvenChart(stats.odd_even);
+        createNumberDistributionChart(stats.frequency);
+        createOddEvenDistChart(stats.odd_even);
+        createHighLowDistChart(stats.high_low);
+        createAcValueChart(stats.ac_value);
+        createSumTrendChart(stats.sum_trend);
+
+        // 도움말 탭의 차트들
+        createSumRangeHelpChart();
+        createOddEvenHelpChart(stats.odd_even);
+
+        // 전체 번호 빈도 차트 (통계 탭)
+        createNumberFrequencyChartFull(stats.frequency);
+    }
+
+    // 최근 당첨번호 표시
+    function displayRecentDraws(recentDraws) {
+        const container = document.querySelector('.recent-draws');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        recentDraws.forEach(draw => {
+            const drawRow = document.createElement('div');
+            drawRow.className = 'draw-row';
+
+            const drawNumber = document.createElement('div');
+            drawNumber.className = 'draw-number';
+            drawNumber.textContent = `${draw.draw_number}회`;
+
+            const drawBalls = document.createElement('div');
+            drawBalls.className = 'draw-balls';
+
+            // 정렬된 당첨번호 볼 생성
+            draw.numbers.forEach(num => {
+                const ball = document.createElement('div');
+                ball.className = 'number-ball';
+
+                // 번호에 따른 색상 지정
+                if (num <= 10) ball.classList.add('ball-yellow');
+                else if (num <= 20) ball.classList.add('ball-blue');
+                else if (num <= 30) ball.classList.add('ball-red');
+                else if (num <= 40) ball.classList.add('ball-gray');
+                else ball.classList.add('ball-green');
+
+                ball.textContent = num;
+                drawBalls.appendChild(ball);
+            });
+
+            drawRow.appendChild(drawNumber);
+            drawRow.appendChild(drawBalls);
+            container.appendChild(drawRow);
+        });
+    }
+
+    // 미니 번호 출현 빈도 차트
+    function createNumberFrequencyChart(frequencyData) {
+        const ctx = document.getElementById('numberFrequencyChart');
+        if (!ctx) return;
+
+        // 출현 빈도가 높은 상위 10개 번호 추출
+        const numbers = Object.keys(frequencyData).map(Number);
+        const topNumbers = numbers.sort((a, b) => frequencyData[b] - frequencyData[a]).slice(0, 10);
+
+        const data = {
+            labels: topNumbers,
+            datasets: [{
+                label: '출현 빈도',
+                data: topNumbers.map(num => frequencyData[num]),
+                backgroundColor: function(context) {
+                    const index = context.dataIndex;
+                    const value = topNumbers[index];
+
+                    if (value <= 10) return colors.yellow;
+                    else if (value <= 20) return colors.blue;
+                    else if (value <= 30) return colors.red;
+                    else if (value <= 40) return colors.gray;
+                    else return colors.green;
+                },
+                borderRadius: 4
+            }]
+        };
 
         new Chart(ctx, {
             type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: '출현 빈도',
-                    data: data,
-                    backgroundColor: function(context) {
-                        const index = context.dataIndex;
-                        const value = labels[index];
-
-                        if (value <= 10) return colors.yellow;
-                        else if (value <= 20) return colors.blue;
-                        else if (value <= 30) return colors.red;
-                        else if (value <= 40) return colors.gray;
-                        else return colors.green;
-                    },
-                    borderRadius: 4
-                }]
-            },
+            data: data,
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -86,18 +163,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+
+        // 미니 차트 옆에 표시할 번호 볼 생성
+        const numberFreq = document.querySelector('.number-freq');
+        if (numberFreq) {
+            numberFreq.innerHTML = '';
+
+            // 상위 5개 번호만 표시
+            topNumbers.slice(0, 5).forEach(num => {
+                const ball = document.createElement('div');
+                ball.className = 'number-ball';
+
+                // 번호에 따른 색상 지정
+                if (num <= 10) ball.classList.add('ball-yellow');
+                else if (num <= 20) ball.classList.add('ball-blue');
+                else if (num <= 30) ball.classList.add('ball-red');
+                else if (num <= 40) ball.classList.add('ball-gray');
+                else ball.classList.add('ball-green');
+
+                ball.textContent = num;
+                numberFreq.appendChild(ball);
+            });
+        }
     }
 
     // 홀짝 비율 차트
-    if (document.getElementById('oddEvenChart')) {
-        const ctx = document.getElementById('oddEvenChart').getContext('2d');
+    function createOddEvenChart(oddEvenStats) {
+        const ctx = document.getElementById('oddEvenChart');
+        if (!ctx) return;
+
+        // 전체 홀수/짝수 비율 계산
+        let oddCount = 0;
+        let evenCount = 0;
+
+        for (let i = 0; i < oddEvenStats.counts.length; i++) {
+            const count = oddEvenStats.counts[i];
+            const oddNumCount = i; // 0 홀수부터 6 홀수까지
+            const evenNumCount = 6 - oddNumCount;
+
+            oddCount += oddNumCount * count;
+            evenCount += evenNumCount * count;
+        }
+
+        // 비율 계산 (퍼센트)
+        const total = oddCount + evenCount;
+        const oddPercent = Math.round((oddCount / total) * 100);
+        const evenPercent = 100 - oddPercent;
 
         new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['홀수', '짝수'],
                 datasets: [{
-                    data: [52, 48],
+                    data: [oddPercent, evenPercent],
                     backgroundColor: [colors.primary, colors.accent],
                     borderWidth: 0
                 }]
@@ -120,27 +238,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 전체 번호 분포 차트
-    if (document.getElementById('numberDistributionChart')) {
-        const ctx = document.getElementById('numberDistributionChart').getContext('2d');
+    function createNumberDistributionChart(frequencyData) {
+        const ctx = document.getElementById('numberDistributionChart');
+        if (!ctx) return;
 
-        // 번호별 당첨 횟수 데이터 (샘플)
-        const numberFrequency = Array.from({length: 45}, (_, i) => {
-            return {
-                number: i + 1,
-                count: Math.floor(Math.random() * 50) + 20
-            };
-        });
+        const labels = Object.keys(frequencyData).map(Number).sort((a, b) => a - b);
+        const data = labels.map(num => frequencyData[num]);
 
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: numberFrequency.map(item => item.number),
+                labels: labels,
                 datasets: [{
                     label: '당첨 횟수',
-                    data: numberFrequency.map(item => item.count),
+                    data: data,
                     backgroundColor: function(context) {
                         const index = context.dataIndex;
-                        const value = index + 1;
+                        const value = labels[index];
 
                         if (value <= 10) return colors.yellow;
                         else if (value <= 20) return colors.blue;
@@ -181,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         },
                         ticks: {
                             autoSkip: true,
-                            maxTicksLimit: 20,
+                            maxTicksLimit: 23,
                             callback: function(val, index) {
                                 return index % 5 === 0 ? this.getLabelForValue(val) : '';
                             }
@@ -192,33 +306,111 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 홀짝 비율 분포 차트 (통계 탭)
-    if (document.getElementById('oddEvenDistChart')) {
-        const ctx = document.getElementById('oddEvenDistChart').getContext('2d');
+    // 전체 번호 빈도 차트 (통계 탭)
+    function createNumberFrequencyChartFull(frequencyData) {
+        const ctx = document.getElementById('numberFrequencyChartFull');
+        if (!ctx) return;
 
-        const data = {
-            labels: ['0:6', '1:5', '2:4', '3:3', '4:2', '5:1', '6:0'],
-            datasets: [{
-                label: '당첨 횟수',
-                data: [8, 52, 138, 364, 142, 50, 6],
-                backgroundColor: function(context) {
-                    const value = context.dataIndex;
-                    const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-                    gradient.addColorStop(0, colors.gradient[0]);
-                    gradient.addColorStop(0.5, colors.gradient[1]);
-                    gradient.addColorStop(1, colors.gradient[2]);
+        const labels = Object.keys(frequencyData).map(Number).sort((a, b) => a - b);
+        const data = labels.map(num => frequencyData[num]);
 
-                    if (value === 0 || value === 6) return 'rgba(220, 53, 69, 0.7)'; // 제외 비율
-                    if (value === 3) return gradient; // 가장 빈번한 비율
-                    return 'rgba(65, 88, 208, 0.7)';
-                },
-                borderRadius: 4
-            }]
-        };
+        // 평균 빈도 계산
+        const avgFrequency = data.reduce((sum, val) => sum + val, 0) / data.length;
 
         new Chart(ctx, {
             type: 'bar',
-            data: data,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '당첨 횟수',
+                    data: data,
+                    backgroundColor: function(context) {
+                        const index = context.dataIndex;
+                        const value = labels[index];
+                        const dataValue = data[index];
+
+                        // 평균보다 높은 빈도의 번호는 더 짙은 색상
+                        let alpha = dataValue > avgFrequency ? 1.0 : 0.7;
+
+                        if (value <= 10) return `rgba(255, 193, 7, ${alpha})`;
+                        else if (value <= 20) return `rgba(33, 150, 243, ${alpha})`;
+                        else if (value <= 30) return `rgba(244, 67, 54, ${alpha})`;
+                        else if (value <= 40) return `rgba(117, 117, 117, ${alpha})`;
+                        else return `rgba(76, 175, 80, ${alpha})`;
+                    },
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                return `번호 ${tooltipItems[0].label}`;
+                            },
+                            label: function(context) {
+                                const dataValue = context.parsed.y;
+                                const avg = avgFrequency.toFixed(1);
+                                const diff = (dataValue - avgFrequency).toFixed(1);
+                                const sign = diff >= 0 ? '+' : '';
+
+                                return [
+                                    `당첨 횟수: ${dataValue}회`,
+                                    `평균과의 차이: ${sign}${diff}회 (평균: ${avg}회)`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 홀짝 비율 분포 차트 (통계 탭)
+    function createOddEvenDistChart(oddEvenStats) {
+        const ctx = document.getElementById('oddEvenDistChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: oddEvenStats.labels,
+                datasets: [{
+                    label: '당첨 횟수',
+                    data: oddEvenStats.counts,
+                    backgroundColor: function(context) {
+                        const value = context.dataIndex;
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                        gradient.addColorStop(0, colors.gradient[0]);
+                        gradient.addColorStop(0.5, colors.gradient[1]);
+                        gradient.addColorStop(1, colors.gradient[2]);
+
+                        if (value === 0 || value === 6) return 'rgba(220, 53, 69, 0.7)'; // 제외 비율
+                        if (value === 3) return gradient; // 가장 빈번한 비율
+                        return 'rgba(65, 88, 208, 0.7)';
+                    },
+                    borderRadius: 4
+                }]
+            },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -230,6 +422,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         callbacks: {
                             title: function(tooltipItems) {
                                 return `홀짝 비율 ${tooltipItems[0].label}`;
+                            },
+                            label: function(context) {
+                                const dataValue = context.parsed.y;
+                                const percent = oddEvenStats.percentages[context.dataIndex];
+
+                                return [
+                                    `당첨 횟수: ${dataValue}회`,
+                                    `비율: ${percent}%`
+                                ];
                             }
                         }
                     }
@@ -244,31 +445,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 고저 비율 분포 차트
-    if (document.getElementById('highLowDistChart')) {
-        const ctx = document.getElementById('highLowDistChart').getContext('2d');
-
-        const data = {
-            labels: ['0:6', '1:5', '2:4', '3:3', '4:2', '5:1', '6:0'],
-            datasets: [{
-                label: '당첨 횟수',
-                data: [6, 48, 130, 382, 150, 46, 5],
-                backgroundColor: function(context) {
-                    const value = context.dataIndex;
-                    const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-                    gradient.addColorStop(0, 'rgba(200, 80, 192, 0.7)');
-                    gradient.addColorStop(1, 'rgba(65, 88, 208, 0.7)');
-
-                    if (value === 0 || value === 6) return 'rgba(220, 53, 69, 0.7)';
-                    if (value === 3) return gradient;
-                    return 'rgba(200, 80, 192, 0.7)';
-                },
-                borderRadius: 4
-            }]
-        };
+    function createHighLowDistChart(highLowStats) {
+        const ctx = document.getElementById('highLowDistChart');
+        if (!ctx) return;
 
         new Chart(ctx, {
             type: 'bar',
-            data: data,
+            data: {
+                labels: highLowStats.labels,
+                datasets: [{
+                    label: '당첨 횟수',
+                    data: highLowStats.counts,
+                    backgroundColor: function(context) {
+                        const value = context.dataIndex;
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                        gradient.addColorStop(0, 'rgba(200, 80, 192, 0.7)');
+                        gradient.addColorStop(1, 'rgba(65, 88, 208, 0.7)');
+
+                        if (value === 0 || value === 6) return 'rgba(220, 53, 69, 0.7)';
+                        if (value === 3) return gradient;
+                        return 'rgba(200, 80, 192, 0.7)';
+                    },
+                    borderRadius: 4
+                }]
+            },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -280,6 +480,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         callbacks: {
                             title: function(tooltipItems) {
                                 return `고저 비율 ${tooltipItems[0].label}`;
+                            },
+                            label: function(context) {
+                                const dataValue = context.parsed.y;
+                                const percent = highLowStats.percentages[context.dataIndex];
+
+                                return [
+                                    `당첨 횟수: ${dataValue}회`,
+                                    `비율: ${percent}%`
+                                ];
                             }
                         }
                     }
@@ -294,31 +503,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // AC값 분포 차트
-    if (document.getElementById('acValueChart')) {
-        const ctx = document.getElementById('acValueChart').getContext('2d');
-
-        const data = {
-            labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'],
-            datasets: [{
-                label: '당첨 횟수',
-                data: [0, 2, 5, 12, 22, 38, 86, 168, 205, 150, 80, 28, 10, 3, 0],
-                backgroundColor: function(context) {
-                    const value = context.dataIndex;
-
-                    if (value < 6) return 'rgba(220, 53, 69, 0.7)';
-
-                    const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-                    gradient.addColorStop(0, 'rgba(76, 175, 80, 0.7)');
-                    gradient.addColorStop(1, 'rgba(33, 150, 243, 0.7)');
-                    return gradient;
-                },
-                borderRadius: 4
-            }]
-        };
+    function createAcValueChart(acValueStats) {
+        const ctx = document.getElementById('acValueChart');
+        if (!ctx) return;
 
         new Chart(ctx, {
             type: 'bar',
-            data: data,
+            data: {
+                labels: acValueStats.labels,
+                datasets: [{
+                    label: '당첨 횟수',
+                    data: acValueStats.counts,
+                    backgroundColor: function(context) {
+                        const value = context.dataIndex;
+
+                        if (value < 6) return 'rgba(220, 53, 69, 0.7)';
+
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                        gradient.addColorStop(0, 'rgba(76, 175, 80, 0.7)');
+                        gradient.addColorStop(1, 'rgba(33, 150, 243, 0.7)');
+                        return gradient;
+                    },
+                    borderRadius: 4
+                }]
+            },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -344,11 +552,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 총합 추이 차트
-    if (document.getElementById('sumTrendChart')) {
-        const ctx = document.getElementById('sumTrendChart').getContext('2d');
+    function createSumTrendChart(sumTrendData) {
+        const ctx = document.getElementById('sumTrendChart');
+        if (!ctx) return;
 
-        // 최근 15회 당첨번호 총합 (샘플)
-        const recentSums = [135, 148, 142, 155, 129, 131, 140, 152, 139, 146, 150, 138, 147, 136, 143];
+        // 최근 15회 당첨번호 총합
+        const labels = sumTrendData.map(item => `${item.draw_number}회`);
+        const data = sumTrendData.map(item => item.sum);
 
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(0, 'rgba(65, 88, 208, 0.8)');
@@ -357,10 +567,10 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: Array.from({length: 15}, (_, i) => `${1000 - 14 + i}회`),
+                labels: labels,
                 datasets: [{
                     label: '총합',
-                    data: recentSums,
+                    data: data,
                     borderColor: colors.primary,
                     backgroundColor: gradient,
                     borderWidth: 2,
@@ -411,9 +621,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 도움말 - 총합 구간 차트
-    if (document.getElementById('sumRangeHelpChart')) {
-        const ctx = document.getElementById('sumRangeHelpChart').getContext('2d');
+    function createSumRangeHelpChart() {
+        const ctx = document.getElementById('sumRangeHelpChart');
+        if (!ctx) return;
 
+        // 총합 분포 곡선 (샘플 데이터)
         const data = [0, 2, 4, 8, 15, 25, 38, 50, 65, 78, 85, 90, 92, 88, 82, 73, 63, 50, 38, 25, 15, 8, 4, 1, 0];
         const labels = Array.from({length: 25}, (_, i) => (70 + i * 10).toString());
 
@@ -467,16 +679,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 도움말 - 홀짝 비율 차트
-    if (document.getElementById('oddEvenHelpChart')) {
-        const ctx = document.getElementById('oddEvenHelpChart').getContext('2d');
+    function createOddEvenHelpChart(oddEvenStats) {
+        const ctx = document.getElementById('oddEvenHelpChart');
+        if (!ctx) return;
 
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['홀0:짝6', '홀1:짝5', '홀2:짝4', '홀3:짝3', '홀4:짝2', '홀5:짝1', '홀6:짝0'],
+                labels: oddEvenStats.labels,
                 datasets: [{
                     label: '비율별 당첨 확률',
-                    data: [1.3, 10.8, 28.5, 36.4, 15.2, 6.8, 1.0],
+                    data: oddEvenStats.percentages,
                     backgroundColor: function(context) {
                         const value = context.dataIndex;
 
