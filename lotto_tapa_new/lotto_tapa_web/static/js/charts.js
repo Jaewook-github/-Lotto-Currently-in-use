@@ -13,6 +13,54 @@ document.addEventListener('DOMContentLoaded', function() {
         gradient: ['rgba(65, 88, 208, 0.8)', 'rgba(200, 80, 192, 0.8)', 'rgba(255, 204, 112, 0.8)']
     };
 
+    // 로딩 표시
+    const statsLoading = document.getElementById('statsLoading');
+    const statsError = document.getElementById('statsError');
+    const statsContent = document.getElementById('statsContent');
+
+    // 타임아웃 설정
+    let statsTimeout = setTimeout(function() {
+        statsLoading.style.display = 'none';
+        statsError.classList.remove('d-none');
+        console.error('통계 데이터 로딩 타임아웃');
+    }, 10000); // 10초 타임아웃
+
+    // DB에서 통계 데이터 가져오기
+    fetch('/stats')
+        .then(response => response.json())
+        .then(data => {
+            // 타임아웃 취소
+            clearTimeout(statsTimeout);
+
+            if (data.success) {
+                const stats = data.stats;
+                statsLoading.style.display = 'none';
+                statsContent.classList.remove('d-none');
+                initializeCharts(stats);
+                displayRecentDraws(stats.recent_draws);
+            } else {
+                statsLoading.style.display = 'none';
+                statsError.classList.remove('d-none');
+                console.error('통계 데이터를 불러오지 못했습니다:', data.error);
+            }
+        })
+        .catch(error => {
+            // 타임아웃 취소
+            clearTimeout(statsTimeout);
+
+            statsLoading.style.display = 'none';
+            statsError.classList.remove('d-none');
+            console.error('통계 데이터 요청 중 오류 발생:', error);
+        });
+
+    // 재시도 버튼 이벤트
+    const retryStatsBtn = document.getElementById('retryStatsBtn');
+    if (retryStatsBtn) {
+        retryStatsBtn.addEventListener('click', function() {
+            location.reload();
+        });
+    }
+
     // 공통 차트 설정
     Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
     Chart.defaults.color = '#666';

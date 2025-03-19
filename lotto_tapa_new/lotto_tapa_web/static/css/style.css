@@ -1,4 +1,4 @@
-/* 로또 타파 웹 서비스 스타일시트 */
+/* 행운 드림 로또 웹 서비스 스타일시트 */
 
 :root {
     /* 기본 색상 */
@@ -114,6 +114,7 @@ a:hover {
     align-items: center;
 }
 
+/* 메뉴 아이템 호버 효과 개선 */
 .menu-items li:hover {
     background-color: rgba(255, 255, 255, 0.15);
 }

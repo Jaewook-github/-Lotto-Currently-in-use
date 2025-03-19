@@ -1,4 +1,4 @@
-// 서비스 워커 - 로또 타파 웹 서비스
+// 서비스 워커 - 행운 드림 로또 웹 서비스
 // 오프라인 기능과 성능 향상을 위한 캐싱 구현
 
 const CACHE_NAME = 'lotto-tapa-cache-v1';
@@ -131,7 +131,7 @@ self.addEventListener('push', event => {
   };
 
   event.waitUntil(
-    self.registration.showNotification('로또 타파', options)
+    self.registration.showNotification('행운 드림 로또', options)
   );
 });
 
