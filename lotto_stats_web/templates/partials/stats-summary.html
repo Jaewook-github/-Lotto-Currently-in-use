@@ -1,0 +1,89 @@
+<!-- stats-summary.html - 통계 요약 부분 -->
+<div class="stats-summary-container">
+    <div class="row">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="stat-header">
+                            <i class="fas fa-hashtag text-primary"></i>
+                            <h6>최다 출현 번호</h6>
+                        </div>
+                        <div class="stat-value">{{ top_number }}</div>
+                        <div class="stat-badge neutral">
+                            <i class="fas fa-chart-line"></i> {{ top_number_count }}회 출현
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="stat-header">
+                            <i class="fas fa-plus-circle text-success"></i>
+                            <h6>평균 합계</h6>
+                        </div>
+                        <div class="stat-value">{{ avg_sum }}</div>
+                        <div class="stat-badge neutral">
+                            <i class="fas fa-calculator"></i> 범위: {{ min_sum }}-{{ max_sum }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="stat-header">
+                            <i class="fas fa-random text-info"></i>
+                            <h6>평균 AC값</h6>
+                        </div>
+                        <div class="stat-value">{{ avg_ac }}</div>
+                        <div class="stat-badge neutral">
+                            <i class="fas fa-info-circle"></i> 복잡도 지표
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="stat-header">
+                            <i class="fas fa-balance-scale text-warning"></i>
+                            <h6>일반적인 홀짝 비율</h6>
+                        </div>
+                        <div class="stat-value">{{ odd_even_ratio }}</div>
+                        <div class="stat-badge neutral">
+                            <i class="fas fa-percentage"></i> {{ odd_even_percentage }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 추가 통계 정보 -->
+    <div class="alert alert-info mt-3">
+        <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+                <i class="fas fa-lightbulb fa-2x me-3"></i>
+            </div>
+            <div class="flex-grow-1">
+                <h5 class="alert-heading">통계 요약 정보</h5>
+                <p class="mb-0">
+                    전체 {{ total_draws }}회차 중 가장 많이 나온 소수는 <strong>{{ most_common_prime }}</strong>번이며,
+                    가장 일반적인 당첨 번호 조합 패턴은 <strong>{{ most_common_pattern }}</strong> 입니다.
+                    전체 기간 동안 평균적으로 <strong>{{ avg_prime_count }}</strong>개의 소수와 <strong>{{ avg_consecutive }}</strong>개의 연속 번호 쌍이 포함되어 있습니다.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

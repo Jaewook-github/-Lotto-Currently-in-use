@@ -1,0 +1,103 @@
+<!-- stats-tabs.html - 통계 탭 컨테이너 -->
+<div class="stats-container">
+    <!-- 탭 네비게이션 -->
+    <ul class="nav nav-tabs" id="statsTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#tab-all" type="button" role="tab" aria-controls="tab-all" aria-selected="true">
+                <i class="fas fa-chart-line"></i> 전체 회차
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="recent100-tab" data-bs-toggle="tab" data-bs-target="#tab-recent100" type="button" role="tab" aria-controls="tab-recent100" aria-selected="false">
+                <i class="fas fa-history"></i> 최근 100회차
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="recent10-tab" data-bs-toggle="tab" data-bs-target="#tab-recent10" type="button" role="tab" aria-controls="tab-recent10" aria-selected="false">
+                <i class="fas fa-bolt"></i> 최근 10회차
+            </button>
+        </li>
+    </ul>
+
+    <!-- 통계 상태 표시 -->
+    <div class="status-bar d-flex justify-content-between align-items-center">
+        <div>
+            <i class="fas fa-info-circle"></i> <span id="statsInfo">통계 데이터를 불러오는 중입니다...</span>
+        </div>
+        <div>
+            <button id="refreshStats" class="btn btn-sm btn-primary">
+                <i class="fas fa-sync-alt"></i> 통계 새로고침
+            </button>
+        </div>
+    </div>
+
+    <!-- 탭 컨텐츠 -->
+    <div class="tab-content" id="statsTabContent">
+        <!-- 전체 회차 탭 -->
+        <div class="tab-pane fade show active" id="tab-all" role="tabpanel" aria-labelledby="all-tab">
+            {% include 'tabs/all-stats.html' %}
+        </div>
+
+        <!-- 최근 100회차 탭 -->
+        <div class="tab-pane fade" id="tab-recent100" role="tabpanel" aria-labelledby="recent100-tab">
+            {% include 'tabs/recent-100.html' %}
+        </div>
+
+        <!-- 최근 10회차 탭 -->
+        <div class="tab-pane fade" id="tab-recent10" role="tabpanel" aria-labelledby="recent10-tab">
+            {% include 'tabs/recent-10.html' %}
+        </div>
+    </div>
+</div>
+
+<!-- 탭 초기화 스크립트 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 탭 초기화
+        TabManager.initTabs('statsTab', {
+            defaultTab: '#tab-all',
+            onTabChange: function(tabId, data) {
+                // 탭 변경 시 정보 업데이트
+                updateStatsInfo(tabId);
+            }
+        });
+
+        // 새로고침 버튼 이벤트
+        document.getElementById('refreshStats').addEventListener('click', function() {
+            // 현재 탭 새로고침
+            const activeTab = TabManager.getActiveTab();
+            if (activeTab) {
+                TabManager.loadTabContent(activeTab, true);
+                updateStatsInfo(activeTab);
+            }
+        });
+
+        // 통계 정보 업데이트
+        function updateStatsInfo(tabId) {
+            const infoElement = document.getElementById('statsInfo');
+            if (!infoElement) return;
+
+            let infoText = '';
+
+            switch (tabId) {
+                case '#tab-all':
+                    infoText = '전체 회차 통계 데이터입니다.';
+                    break;
+                case '#tab-recent100':
+                    infoText = '최근 100회차 통계 데이터입니다.';
+                    break;
+                case '#tab-recent10':
+                    infoText = '최근 10회차 통계 데이터입니다.';
+                    break;
+                default:
+                    infoText = '통계 데이터를 로드 중입니다...';
+                    break;
+            }
+
+            infoElement.textContent = infoText;
+        }
+
+        // 초기 정보 설정
+        updateStatsInfo('#tab-all');
+    });
+</script>

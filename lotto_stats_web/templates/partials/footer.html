@@ -1,0 +1,44 @@
+<!-- footer.html - 사이트 푸터 -->
+<footer class="mt-auto py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h5><i class="fas fa-chart-pie text-primary me-2"></i> PROBA</h5>
+                <p class="text-muted">
+                    과학적 통계 분석을 통한 로또 번호 패턴 분석 서비스<br>
+                    <small>※ 당첨을 보장하지 않으며 참고용으로만 활용하세요.</small>
+                </p>
+            </div>
+            <div class="col-md-3">
+                <h6>바로가기</h6>
+                <ul class="list-unstyled">
+                    <li><a href="{{ url_for('main.index') }}">홈</a></li>
+                    <li><a href="{{ url_for('stats.recent_stats', limit=100) }}">최근 100회 통계</a></li>
+                    <li><a href="{{ url_for('main.detailed_stats') }}">상세 분석</a></li>
+                    <li><a href="{{ url_for('main.patterns_page') }}">패턴 분석</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 text-md-end">
+                <h6>정보</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#">이용약관</a></li>
+                    <li><a href="#">개인정보처리방침</a></li>
+                    <li><a href="mailto:contact@proba.diying.co.kr">문의하기</a></li>
+                </ul>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-0 text-muted">
+                    &copy; 2025 PROBA. All rights reserved.
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0 text-muted">
+                    <small>최근 업데이트: {{ last_update_time }}</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>

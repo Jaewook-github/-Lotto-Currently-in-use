@@ -1,0 +1,520 @@
+<!-- recent-10.html - 최근 10회차 통계 -->
+<div class="stats-content">
+    <!-- 최근 당첨 번호 요약 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-list-ol"></i> 최근 10회 당첨 번호</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>회차</th>
+                                    <th>추첨일</th>
+                                    <th>당첨 번호</th>
+                                    <th>합계</th>
+                                    <th>AC값</th>
+                                    <th>홀짝</th>
+                                    <th>고저</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-draws-table-10">
+                                <tr>
+                                    <td colspan="7" class="text-center">로딩 중...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 통계 요약 -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle"></i> 통계 요약</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="alert alert-info" id="recent10-summary">
+                            <p><strong>평균 당첨 합계:</strong> <span id="recent10-avg-sum">로딩 중...</span></p>
+                            <p><strong>평균 AC값:</strong> <span id="recent10-avg-ac">로딩 중...</span></p>
+                            <p><strong>홀짝 비율 경향:</strong> <span id="recent10-odd-even-trend">로딩 중...</span></p>
+                            <p><strong>고저 비율 경향:</strong> <span id="recent10-high-low-trend">로딩 중...</span></p>
+                            <p><strong>최다 출현 끝수:</strong> <span id="recent10-last-digit">로딩 중...</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-trophy"></i> 특징 분석</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="stat-header">
+                            <i class="fas fa-hashtag"></i>
+                            <h6>출현 번호 범위</h6>
+                        </div>
+                        <div class="mb-3" id="recent10-number-range">로딩 중...</div>
+
+                        <div class="stat-header">
+                            <i class="fas fa-chart-pie"></i>
+                            <h6>번호대별 분포</h6>
+                        </div>
+                        <div class="progress-group">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>1-10번대</span>
+                                <span id="zone1-percent">0%</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 6px">
+                                <div id="zone1-bar" class="progress-bar bg-warning" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-group">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>11-20번대</span>
+                                <span id="zone2-percent">0%</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 6px">
+                                <div id="zone2-bar" class="progress-bar bg-primary" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-group">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>21-30번대</span>
+                                <span id="zone3-percent">0%</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 6px">
+                                <div id="zone3-bar" class="progress-bar bg-danger" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-group">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>31-40번대</span>
+                                <span id="zone4-percent">0%</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 6px">
+                                <div id="zone4-bar" class="progress-bar bg-secondary" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-group">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>41-45번대</span>
+                                <span id="zone5-percent">0%</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 6px">
+                                <div id="zone5-bar" class="progress-bar bg-success" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line"></i> 트렌드 분석</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">최신 트렌드</h6>
+                            <ul id="recent-trends-list">
+                                <li>소수 번호 비율: <span id="recent10-prime-trend">로딩 중...</span></li>
+                                <li>연속 번호 출현: <span id="recent10-consecutive-trend">로딩 중...</span></li>
+                                <li>합계 범위: <span id="recent10-sum-trend">로딩 중...</span></li>
+                                <li>AC값 경향: <span id="recent10-ac-trend">로딩 중...</span></li>
+                                <li>끝수 분포: <span id="recent10-lastdigit-trend">로딩 중...</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button class="btn btn-sm btn-outline-primary" id="compare-recent10-all">
+                                <i class="fas fa-chart-bar"></i> 전체/최근 100회 비교
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-fire"></i> 주목할 번호</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="stat-header">
+                            <i class="fas fa-arrow-up"></i>
+                            <h6>급상승 번호</h6>
+                        </div>
+                        <div class="frequency-display" id="rising-numbers-recent10">
+                            <!-- 상승세 번호가 여기에 동적으로 표시됩니다 -->
+                        </div>
+
+                        <div class="stat-header mt-3">
+                            <i class="fas fa-asterisk"></i>
+                            <h6>최근 출현 번호</h6>
+                        </div>
+                        <div class="frequency-display" id="recent-numbers-recent10">
+                            <!-- 최근 출현 번호가 여기에 동적으로 표시됩니다 -->
+                        </div>
+
+                        <div class="stat-header mt-3">
+                            <i class="fas fa-hourglass"></i>
+                            <h6>오랫동안 나오지 않은 번호</h6>
+                        </div>
+                        <div class="frequency-display" id="overdue-numbers-recent10">
+                            <!-- 미출현 번호가 여기에 동적으로 표시됩니다 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 빈도 및 패턴 분석 차트 -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar"></i> 번호별 출현 빈도</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" id="frequencyChart10">
+                        <canvas id="frequency-chart-recent10"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-puzzle-piece"></i> 출현 패턴</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-outline-primary active" id="odd-even-btn-10">홀짝 비율</button>
+                            <button type="button" class="btn btn-outline-primary" id="high-low-btn-10">고저 비율</button>
+                            <button type="button" class="btn btn-outline-primary" id="prime-btn-10">소수 분포</button>
+                            <button type="button" class="btn btn-outline-primary" id="lastdigit-btn-10">끝수 분포</button>
+                        </div>
+                    </div>
+
+                    <div class="pattern-charts">
+                        <!-- 홀짝 차트 (기본 표시) -->
+                        <div class="pattern-chart active" id="odd-even-chart-container-10">
+                            <div class="chart-container" id="oddEvenChart10">
+                                <canvas id="odd-even-chart-recent10"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 고저 차트 -->
+                        <div class="pattern-chart" id="high-low-chart-container-10" style="display: none;">
+                            <div class="chart-container" id="highLowChart10">
+                                <canvas id="high-low-chart-recent10"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 소수 차트 -->
+                        <div class="pattern-chart" id="prime-chart-container-10" style="display: none;">
+                            <div class="chart-container" id="primeChart10">
+                                <canvas id="prime-chart-recent10"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 끝수 차트 -->
+                        <div class="pattern-chart" id="lastdigit-chart-container-10" style="display: none;">
+                            <div class="chart-container" id="lastDigitChart10">
+                                <canvas id="lastdigit-chart-recent10"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AC값 및 합계 분포 차트 -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-random"></i> AC값 분포 (복잡도)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" id="acValueChart10">
+                        <canvas id="ac-value-chart-recent10"></canvas>
+                    </div>
+                    <div id="ac-summary-recent10" class="ac-summary mt-3">
+                        <!-- AC값 요약 정보가 동적으로 표시됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-plus-circle"></i> 합계 분포</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" id="sumChart10">
+                        <canvas id="sum-chart-recent10"></canvas>
+                    </div>
+                    <div id="sum-summary-recent10" class="sum-summary mt-3">
+                        <!-- 합계 요약 정보가 동적으로 표시됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 통계 초기화 스크립트 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 패턴 차트 버튼 이벤트 설정
+        const patternButtons = document.querySelectorAll('[id$="-btn-10"]');
+        patternButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 버튼 활성화 상태 변경
+                patternButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // 차트 표시 변경
+                const chartType = this.id.replace('-btn-10', '');
+                document.querySelectorAll('.pattern-chart').forEach(chart => {
+                    chart.style.display = 'none';
+                });
+                document.getElementById(chartType + '-chart-container-10').style.display = 'block';
+
+                // 차트 리사이즈 트리거
+                window.dispatchEvent(new Event('resize'));
+            });
+        });
+
+        // 통계 데이터 로드 이벤트 리스너
+        document.addEventListener('tabDataLoaded', function(e) {
+            if (e.detail.tabId === '#tab-recent10') {
+                updateRecent10StatsUI(e.detail.data);
+            }
+        });
+
+        // 전체 회차와 비교 버튼 이벤트
+        document.getElementById('compare-recent10-all').addEventListener('click', function() {
+            // 비교 모달 또는 팝업 표시 로직
+            alert('최근 10회차와 전체/최근 100회차 비교 기능은 준비 중입니다.');
+        });
+
+        // 최근 10회차 통계 UI 업데이트
+        function updateRecent10StatsUI(data) {
+            if (!data) return;
+
+            // 요약 정보 업데이트
+            const summary = data.summary || {};
+            if (summary) {
+                document.getElementById('recent10-avg-sum').textContent = summary.avg_sum?.toFixed(1) || '--';
+                document.getElementById('recent10-avg-ac').textContent = summary.avg_ac?.toFixed(1) || '--';
+
+                // 홀짝/고저 비율 경향
+                const oddEvenRatio = summary.odd_even_ratio || '';
+                const highLowRatio = summary.high_low_ratio || '';
+
+                document.getElementById('recent10-odd-even-trend').innerHTML =
+                    `<span class="badge bg-info">${oddEvenRatio}</span>`;
+                document.getElementById('recent10-high-low-trend').innerHTML =
+                    `<span class="badge bg-info">${highLowRatio}</span>`;
+            }
+
+            // 최근 당첨 번호 테이블 업데이트
+            const recentDrawsData = data.recent_draws || [];
+            updateRecentDrawsTable(recentDrawsData);
+
+            // 번호대별 분포 계산
+            calculateZoneDistribution(recentDrawsData);
+
+            // 번호 범위 업데이트
+            updateNumberRange(recentDrawsData);
+
+            // 최근 출현 번호 표시
+            updateRecentNumbers(recentDrawsData);
+        }
+
+        // 당첨 번호 테이블 업데이트
+        function updateRecentDrawsTable(draws) {
+            const tableBody = document.getElementById('recent-draws-table-10');
+            if (!tableBody || !draws || !draws.length) return;
+
+            let html = '';
+
+            draws.forEach(draw => {
+                // 번호 정렬
+                const sortedNumbers = [...draw.numbers].sort((a, b) => a - b);
+
+                // 번호 HTML 생성
+                const numbersHtml = sortedNumbers.map(num => {
+                    return `<div class="ball mini ${formatUtils.getBallColorClass(num)}">${num}</div>`;
+                }).join('');
+
+                // 보너스 번호
+                const bonusHtml = draw.bonus ?
+                    `<div class="ball mini bonus ${formatUtils.getBallColorClass(draw.bonus)}">${draw.bonus}</div>` : '';
+
+                // 합계 계산
+                const sum = sortedNumbers.reduce((a, b) => a + b, 0);
+
+                // AC값 계산
+                const ac = calculateAC(sortedNumbers);
+
+                // 홀짝 비율
+                const oddCount = sortedNumbers.filter(n => n % 2 === 1).length;
+                const oddEven = `${oddCount}:${6-oddCount}`;
+
+                // 고저 비율 (기준: 23)
+                const highCount = sortedNumbers.filter(n => n >= 23).length;
+                const highLow = `${highCount}:${6-highCount}`;
+
+                // 날짜 포맷
+                const date = draw.draw_date ? new Date(draw.draw_date).toLocaleDateString() : '-';
+
+                // 행 추가
+                html += `
+                <tr>
+                    <td>${draw.draw_number}</td>
+                    <td>${date}</td>
+                    <td class="d-flex">${numbersHtml} ${bonusHtml}</td>
+                    <td>${sum}</td>
+                    <td>${ac}</td>
+                    <td>${oddEven}</td>
+                    <td>${highLow}</td>
+                </tr>
+                `;
+            });
+
+            tableBody.innerHTML = html;
+        }
+
+        // 번호대별 분포 계산
+        function calculateZoneDistribution(draws) {
+            if (!draws || !draws.length) return;
+
+            // 번호대별 카운트 초기화
+            const zoneCounts = [0, 0, 0, 0, 0]; // 1-10, 11-20, 21-30, 31-40, 41-45
+            let totalNumbers = 0;
+
+            // 모든 번호 탐색
+            draws.forEach(draw => {
+                draw.numbers.forEach(num => {
+                    totalNumbers++;
+                    if (num <= 10) zoneCounts[0]++;
+                    else if (num <= 20) zoneCounts[1]++;
+                    else if (num <= 30) zoneCounts[2]++;
+                    else if (num <= 40) zoneCounts[3]++;
+                    else zoneCounts[4]++;
+                });
+            });
+
+            // 백분율 계산 및 표시
+            for (let i = 0; i < 5; i++) {
+                const percent = (zoneCounts[i] / totalNumbers * 100).toFixed(1);
+                document.getElementById(`zone${i+1}-percent`).textContent = `${percent}%`;
+                document.getElementById(`zone${i+1}-bar`).style.width = `${percent}%`;
+            }
+        }
+
+        // 번호 범위 계산
+        function updateNumberRange(draws) {
+            if (!draws || !draws.length) return;
+
+            // 모든 번호 추출
+            const allNumbers = draws.flatMap(draw => draw.numbers);
+
+            // 최소/최대값 찾기
+            const minNumber = Math.min(...allNumbers);
+            const maxNumber = Math.max(...allNumbers);
+
+            // 범위 표시
+            document.getElementById('recent10-number-range').innerHTML =
+                `<strong>${minNumber}번 ~ ${maxNumber}번</strong> (범위: ${maxNumber - minNumber + 1}개)`;
+        }
+
+        // 최근 출현 번호 표시
+        function updateRecentNumbers(draws) {
+            if (!draws || !draws.length) return;
+
+            // 가장 최근 당첨 번호 (첫 번째 항목)
+            const latestDraw = draws[0];
+            if (!latestDraw) return;
+
+            // 최근 출현 번호 표시
+            const recentNumbersContainer = document.getElementById('recent-numbers-recent10');
+            if (recentNumbersContainer) {
+                let html = '';
+
+                // 정렬된 번호 표시
+                const sortedNumbers = [...latestDraw.numbers].sort((a, b) => a - b);
+
+                sortedNumbers.forEach(num => {
+                    html += `<div class="ball ${formatUtils.getBallColorClass(num)}">${num}</div>`;
+                });
+
+                recentNumbersContainer.innerHTML = html;
+            }
+
+            // 미출현 번호 계산 (간단하게 최근 10회에 나오지 않은 번호)
+            const allNumbers = draws.flatMap(draw => draw.numbers);
+            const missingNumbers = [];
+
+            for (let i = 1; i <= 45; i++) {
+                if (!allNumbers.includes(i)) {
+                    missingNumbers.push(i);
+                }
+            }
+
+            // 미출현 번호 표시 (최대 5개)
+            const overdueContainer = document.getElementById('overdue-numbers-recent10');
+            if (overdueContainer) {
+                let html = '';
+
+                missingNumbers.slice(0, 5).forEach(num => {
+                    html += `<div class="ball ${formatUtils.getBallColorClass(num)}">${num}</div>`;
+                });
+
+                if (html === '') {
+                    html = '<span class="text-muted">없음 (모든 번호가 출현함)</span>';
+                }
+
+                overdueContainer.innerHTML = html;
+            }
+        }
+
+        // AC값 계산 함수
+        function calculateAC(numbers) {
+            const sorted = [...numbers].sort((a, b) => a - b);
+            const diffs = new Set();
+
+            for (let i = 0; i < sorted.length; i++) {
+                for (let j = i + 1; j < sorted.length; j++) {
+                    diffs.add(sorted[j] - sorted[i]);
+                }
+            }
+
+            return diffs.size - 5;
+        }
+    });
+</script>

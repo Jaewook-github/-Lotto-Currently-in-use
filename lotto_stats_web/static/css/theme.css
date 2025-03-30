@@ -1,0 +1,159 @@
+/* theme.css - 로또 통계 분석 사이트 테마 스타일 */
+
+/* 라이트 모드 (기본 테마) */
+:root {
+  /* 기본 색상 */
+  --primary-color: #4158D0;
+  --primary-light: #7986ff;
+  --primary-dark: #3246a8;
+  --primary-rgb: 65, 88, 208;
+
+  --primary-gradient: linear-gradient(43deg, #4158D0 0%, #C850C0 100%);
+
+  /* 상태 색상 */
+  --success: #2ecc71;
+  --success-light: rgba(46, 204, 113, 0.15);
+  --danger: #e74c3c;
+  --danger-light: rgba(231, 76, 60, 0.15);
+  --warning: #f39c12;
+  --warning-light: rgba(243, 156, 18, 0.15);
+  --info: #3498db;
+  --info-light: rgba(52, 152, 219, 0.15);
+
+  /* 텍스트 색상 */
+  --text-color: #333333;
+  --text-light: #6c757d;
+  --text-muted: #adb5bd;
+
+  /* 배경 색상 */
+  --bg-color: #f8f9fa;
+  --card-bg: #ffffff;
+  --card-header-bg: #ffffff;
+  --card-header-text: #333333;
+  --status-bar-bg: rgba(0, 0, 0, 0.03);
+  --hover-bg: rgba(0, 0, 0, 0.02);
+  --tab-hover-bg: rgba(0, 0, 0, 0.02);
+  --tab-active-bg: rgba(0, 0, 0, 0.03);
+  --footer-bg: #ffffff;
+  --footer-text: #6c757d;
+  --footer-link: #4158D0;
+  --table-header-bg: rgba(0, 0, 0, 0.02);
+
+  /* 경계선 색상 */
+  --border-color: #dee2e6;
+
+  /* 그림자 효과 */
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --card-shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+  /* 로또 번호 색상 */
+  --ball-yellow: #ffc107;
+  --ball-blue: #2196f3;
+  --ball-red: #f44336;
+  --ball-gray: #757575;
+  --ball-green: #4caf50;
+  --bonus-marker: #ff5722;
+}
+
+/* 다크 모드 */
+body.dark-mode {
+  /* 기본 색상 */
+  --primary-color: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
+  --primary-rgb: 99, 102, 241;
+
+  --primary-gradient: linear-gradient(43deg, #6366f1 0%, #a855f7 100%);
+
+  /* 상태 색상 */
+  --success: #4ade80;
+  --success-light: rgba(74, 222, 128, 0.15);
+  --danger: #f87171;
+  --danger-light: rgba(248, 113, 113, 0.15);
+  --warning: #fbbf24;
+  --warning-light: rgba(251, 191, 36, 0.15);
+  --info: #60a5fa;
+  --info-light: rgba(96, 165, 250, 0.15);
+
+  /* 텍스트 색상 */
+  --text-color: #e2e8f0;
+  --text-light: #94a3b8;
+  --text-muted: #64748b;
+
+  /* 배경 색상 */
+  --bg-color: #0f172a;
+  --card-bg: #1e293b;
+  --card-header-bg: #1e293b;
+  --card-header-text: #e2e8f0;
+  --status-bar-bg: rgba(255, 255, 255, 0.05);
+  --hover-bg: rgba(255, 255, 255, 0.05);
+  --tab-hover-bg: rgba(255, 255, 255, 0.05);
+  --tab-active-bg: rgba(255, 255, 255, 0.08);
+  --footer-bg: #1e293b;
+  --footer-text: #94a3b8;
+  --footer-link: #818cf8;
+  --table-header-bg: rgba(255, 255, 255, 0.05);
+
+  /* 경계선 색상 */
+  --border-color: #334155;
+
+  /* 그림자 효과 */
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --card-shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.3);
+
+  /* 로또 번호 색상은 동일하게 유지 */
+}
+
+/* 고대비 모드 */
+body.high-contrast {
+  --primary-color: #ffff00;
+  --primary-light: #ffff99;
+  --primary-dark: #cccc00;
+  --primary-rgb: 255, 255, 0;
+
+  --primary-gradient: linear-gradient(43deg, #ffff00 0%, #ff00ff 100%);
+
+  /* 상태 색상 */
+  --success: #00ff00;
+  --success-light: rgba(0, 255, 0, 0.15);
+  --danger: #ff0000;
+  --danger-light: rgba(255, 0, 0, 0.15);
+  --warning: #ffaa00;
+  --warning-light: rgba(255, 170, 0, 0.15);
+  --info: #00ffff;
+  --info-light: rgba(0, 255, 255, 0.15);
+
+  /* 텍스트 색상 */
+  --text-color: #ffffff;
+  --text-light: #cccccc;
+  --text-muted: #999999;
+
+  /* 배경 색상 */
+  --bg-color: #000000;
+  --card-bg: #222222;
+  --card-header-bg: #333333;
+  --card-header-text: #ffffff;
+  --status-bar-bg: rgba(255, 255, 255, 0.1);
+  --hover-bg: rgba(255, 255, 255, 0.1);
+  --tab-hover-bg: rgba(255, 255, 255, 0.1);
+  --tab-active-bg: rgba(255, 255, 255, 0.15);
+  --footer-bg: #222222;
+  --footer-text: #cccccc;
+  --footer-link: #ffff00;
+  --table-header-bg: rgba(255, 255, 255, 0.1);
+
+  /* 경계선 색상 */
+  --border-color: #555555;
+
+  /* 그림자 효과 */
+  --card-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+  --card-shadow-hover: 0 5px 15px rgba(255, 255, 255, 0.3);
+
+  /* 로또 번호 색상 - 고대비 */
+  --ball-yellow: #ffff00;
+  --ball-blue: #00ffff;
+  --ball-red: #ff0000;
+  --ball-gray: #ffffff;
+  --ball-green: #00ff00;
+  --bonus-marker: #ff00ff;
+}

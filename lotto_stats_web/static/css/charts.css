@@ -1,0 +1,443 @@
+/* charts.css - 로또 통계 분석 사이트 차트 스타일 */
+
+/* 차트 공통 스타일 */
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  margin-bottom: 1.5rem;
+}
+
+.chart-container.small {
+  height: 200px;
+}
+
+.chart-container.mini {
+  height: 150px;
+}
+
+/* 차트 제목 */
+.chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-color);
+}
+
+.chart-title i {
+  margin-right: 0.5rem;
+  color: var(--primary-color);
+}
+
+/* 로딩 상태 */
+.chart-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(var(--bg-color-rgb), 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.chart-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(var(--primary-rgb), 0.3);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: chart-spin 1s linear infinite;
+}
+
+@keyframes chart-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.chart-loading-text {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-color);
+}
+
+/* 차트 오류 */
+.chart-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(var(--bg-color-rgb), 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  padding: 1rem;
+  text-align: center;
+}
+
+.chart-error-icon {
+  font-size: 2rem;
+  color: var(--danger);
+  margin-bottom: 0.75rem;
+}
+
+.chart-error-text {
+  font-size: 0.875rem;
+  color: var(--text-color);
+  max-width: 80%;
+}
+
+.chart-error-action {
+  margin-top: 0.75rem;
+}
+
+/* 차트 범례 */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.75rem;
+  gap: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--text-light);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 0.5rem;
+}
+
+/* 특수 차트 스타일 */
+
+/* 번호 빈도 차트 */
+.number-frequency-chart {
+  position: relative;
+}
+
+.number-frequency-chart .highlight-zone {
+  position: absolute;
+  background-color: rgba(var(--primary-rgb), 0.1);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 히트맵 스타일 */
+.heatmap-container {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 3px;
+  margin: 1rem 0;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 4px;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+/* AC값 차트 */
+.ac-value-chart .recommended-zone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: rgba(var(--success-rgb), 0.1);
+  border-left: 2px solid var(--success);
+  border-right: 2px solid var(--success);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ac-value-marker {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  color: var(--success);
+  font-weight: 600;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+/* 총합 구간 차트 */
+.sum-range-chart .recommended-zone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: rgba(var(--info-rgb), 0.1);
+  border-left: 2px solid var(--info);
+  border-right: 2px solid var(--info);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.sum-range-marker {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  color: var(--info);
+  font-weight: 600;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+/* 홀짝/고저 비율 차트 */
+.ratio-chart-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.ratio-chart {
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+}
+
+.ratio-title {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-color);
+}
+
+/* 상관관계 매트릭스 */
+.correlation-matrix {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.matrix-table {
+  border-collapse: collapse;
+  min-width: 100%;
+}
+
+.matrix-table th, .matrix-table td {
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.matrix-table th {
+  position: sticky;
+  top: 0;
+  background-color: var(--card-bg);
+  z-index: 1;
+}
+
+.matrix-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+.matrix-table td:first-child {
+  position: sticky;
+  left: 0;
+  background-color: var(--card-bg);
+  font-weight: 600;
+  z-index: 1;
+}
+
+.matrix-cell {
+  border-radius: 4px;
+  transition: transform 0.2s;
+}
+
+.matrix-cell:hover {
+  transform: scale(1.2);
+  z-index: 3;
+}
+
+/* 트렌드 차트 */
+.trend-indicator {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.trend-indicator.up {
+  color: var(--success);
+}
+
+.trend-indicator.down {
+  color: var(--danger);
+}
+
+.trend-indicator.stable {
+  color: var(--info);
+}
+
+.trend-indicator i {
+  margin-right: 0.25rem;
+}
+
+/* 모서리 패턴 시각화 */
+.corner-pattern {
+ display: grid;
+ grid-template-columns: repeat(7, 1fr);
+ grid-template-rows: repeat(6, 1fr);
+ gap: 3px;
+ margin: 1rem 0;
+ max-width: 350px;
+}
+
+.corner-cell {
+ aspect-ratio: 1;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-weight: 600;
+ border-radius: 4px;
+ font-size: 0.875rem;
+ background-color: var(--hover-bg);
+ transition: transform 0.2s, background-color 0.2s;
+}
+
+.corner-cell:hover {
+ transform: scale(1.1);
+ z-index: 1;
+}
+
+.corner-cell.corner {
+ background-color: rgba(var(--primary-rgb), 0.2);
+ border: 2px solid var(--primary-color);
+}
+
+.corner-cell.selected {
+ background-color: var(--primary-color);
+ color: white;
+}
+
+/* 번호 조합 패턴 차트 */
+.pattern-chart {
+ margin: 1.5rem 0;
+}
+
+.pattern-item {
+ display: flex;
+ align-items: center;
+ margin-bottom: 1rem;
+ padding: 0.75rem;
+ background-color: var(--hover-bg);
+ border-radius: 8px;
+ transition: transform 0.2s;
+}
+
+.pattern-item:hover {
+ transform: translateX(5px);
+}
+
+.pattern-label {
+ display: flex;
+ flex-direction: column;
+ margin-right: 1rem;
+ min-width: 100px;
+}
+
+.pattern-code {
+ font-weight: 700;
+ font-size: 1.1rem;
+ color: var(--primary-color);
+}
+
+.pattern-count {
+ font-size: 0.875rem;
+ color: var(--text-light);
+}
+
+.pattern-bar {
+ flex: 1;
+ height: 30px;
+ background: var(--primary-gradient);
+ border-radius: 4px;
+ position: relative;
+}
+
+.pattern-percentage {
+ position: absolute;
+ right: 10px;
+ top: 50%;
+ transform: translateY(-50%);
+ color: white;
+ font-weight: 600;
+ font-size: 0.875rem;
+}
+
+/* 3D 번호 분포 차트 */
+.number-distribution-3d {
+ width: 100%;
+ height: 400px;
+ position: relative;
+ margin: 1.5rem 0;
+}
+
+/* 윈로즈 차트 (방사형 바 차트) */
+.windrose-chart {
+ position: relative;
+ width: 100%;
+ padding-bottom: 100%; /* 정사각형 유지 */
+}
+
+.windrose-chart svg {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+}
+
+/* 데이터 없음 표시 */
+.no-data {
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+ height: 100%;
+ min-height: 200px;
+ color: var(--text-light);
+ text-align: center;
+ padding: 2rem;
+}
+
+.no-data-icon {
+ font-size: 3rem;
+ margin-bottom: 1rem;
+ opacity: 0.5;
+}
+
+.no-data-text {
+ font-size: 1.1rem;
+ font-weight: 500;
+ margin-bottom: 0.5rem;
+}
+
+.no-data-subtext {
+ font-size: 0.9rem;
+ max-width: 80%;
+}

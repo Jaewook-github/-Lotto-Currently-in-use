@@ -1,0 +1,60 @@
+<!-- header.html - 사이트 헤더 및 네비게이션 -->
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <!-- 로고 및 브랜드 -->
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <i class="fas fa-chart-pie text-primary me-2"></i> PROBA
+            </a>
+
+            <!-- 모바일 토글 버튼 -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="메뉴 토글">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- 네비게이션 링크 -->
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">
+                            <i class="fas fa-home"></i> 홈
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('stats.recent_stats', limit=100) }}">
+                            <i class="fas fa-chart-bar"></i> 최근 100회
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.detailed_stats') }}">
+                            <i class="fas fa-search-plus"></i> 상세 분석
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.patterns_page') }}">
+                            <i class="fas fa-puzzle-piece"></i> 패턴 분석
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.analyze_page') }}">
+                            <i class="fas fa-tools"></i> 분석 도구
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- 우측 메뉴 (테마 토글, 새로고침 등) -->
+                <div class="d-flex">
+                    <!-- 테마 토글 버튼 -->
+                    <button id="themeToggle" class="btn btn-sm btn-outline-secondary me-2" title="다크 모드로 전환">
+                        <i class="fas fa-moon"></i>
+                    </button>
+
+                    <!-- 새로고침 버튼 -->
+                    <a href="{{ url_for('main.refresh_stats') }}" class="btn btn-sm btn-outline-primary" title="통계 새로고침">
+                        <i class="fas fa-sync-alt"></i> 새로고침
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>

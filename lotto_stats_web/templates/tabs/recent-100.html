@@ -1,0 +1,482 @@
+<!-- recent-100.html - 최근 100회차 통계 -->
+<div class="stats-content">
+    <!-- 통계 요약 -->
+    <div class="row mb-4">
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle"></i> 통계 요약</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="alert alert-info" id="recent100-summary">
+                            <p><strong>최다 출현 번호:</strong> <span id="recent100-most-frequent">로딩 중...</span></p>
+                            <p><strong>평균 당첨 합계:</strong> <span id="recent100-avg-sum">로딩 중...</span></p>
+                            <p><strong>평균 AC값:</strong> <span id="recent100-avg-ac">로딩 중...</span></p>
+                            <p><strong>홀짝 비율:</strong> <span id="recent100-odd-even">로딩 중...</span></p>
+                            <p><strong>고저 비율:</strong> <span id="recent100-high-low">로딩 중...</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-trophy"></i> 상위 번호</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="stat-header">
+                            <i class="fas fa-chart-bar"></i>
+                            <h6>가장 많이 나온 번호</h6>
+                        </div>
+                        <div class="frequency-display" id="top-numbers-recent100">
+                            <!-- 상위 번호가 여기에 동적으로 표시됩니다 -->
+                        </div>
+
+                        <div class="stat-header mt-3">
+                            <i class="fas fa-rocket"></i>
+                            <h6>최근 급상승 번호</h6>
+                        </div>
+                        <div class="frequency-display" id="trending-numbers-recent100">
+                            <!-- 상승세 번호가 여기에 동적으로 표시됩니다 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line"></i> 트렌드 분석</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="stat-header">
+                            <i class="fas fa-arrow-trend-up"></i>
+                            <h6>전체 대비 최근 변화</h6>
+                        </div>
+                        <div class="mb-2" id="recent100-trend">
+                            <div class="trend-badge neutral">
+                                <i class="fas fa-spinner fa-spin"></i> 분석 중...
+                            </div>
+                        </div>
+
+                        <div class="stat-header mt-3">
+                            <i class="fas fa-random"></i>
+                            <h6>랜덤성 점수</h6>
+                        </div>
+                        <div class="stat-value" id="randomness-score-recent100">--</div>
+                        <div class="stat-badge neutral" id="randomness-badge-recent100">
+                            <i class="fas fa-info-circle"></i> 평가 중...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-history"></i> 비교 분석</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-summary">
+                        <div class="alert alert-info">
+                            <h6>최근 100회차 특징</h6>
+                            <ul class="mb-0">
+                                <li>기간: <span id="recent100-date-range">로딩 중...</span></li>
+                                <li>회차: <span id="recent100-draw-range">로딩 중...</span></li>
+                                <li>전체 대비 변동성: <span id="recent100-volatility">로딩 중...</span></li>
+                            </ul>
+                        </div>
+
+                        <button class="btn btn-sm btn-outline-primary mt-2" id="compare-recent100-all">
+                            <i class="fas fa-chart-bar"></i> 전체 회차와 비교
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 번호 출현 빈도 차트 -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar"></i> 번호별 출현 빈도</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" id="frequencyChart100">
+                        <canvas id="frequency-chart-recent100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5><i class="fas fa-calculator"></i> 홀짝 & 고저 비율</h5>
+                </div>
+                <div class="card-body">
+                    <div class="ratio-chart-container">
+                        <div class="ratio-chart mb-4">
+                            <div class="ratio-title">홀짝 비율</div>
+                            <div class="chart-container small" id="oddEvenChart100">
+                                <canvas id="odd-even-chart-recent100"></canvas>
+                            </div>
+                            <div id="odd-even-summary-recent100" class="odd-even-summary mt-2">
+                                <!-- 홀짝 요약 정보가 동적으로 표시됩니다 -->
+                            </div>
+                        </div>
+
+                        <div class="ratio-chart">
+                            <div class="ratio-title">고저 비율 (기준: 23번)</div>
+                            <div class="chart-container small" id="highLowChart100">
+                                <canvas id="high-low-chart-recent100"></canvas>
+                            </div>
+                            <div id="high-low-summary-recent100" class="high-low-summary mt-2">
+                                <!-- 고저 요약 정보가 동적으로 표시됩니다 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AC값 및 합계 분포 차트 -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-random"></i> AC값 분포 (복잡도)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" id="acValueChart100">
+                        <canvas id="ac-value-chart-recent100"></canvas>
+                    </div>
+                    <div id="ac-summary-recent100" class="ac-summary mt-3">
+                        <!-- AC값 요약 정보가 동적으로 표시됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-plus-circle"></i> 합계 분포</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" id="sumChart100">
+                        <canvas id="sum-chart-recent100"></canvas>
+                    </div>
+                    <div id="sum-summary-recent100" class="sum-summary mt-3">
+                        <!-- 합계 요약 정보가 동적으로 표시됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 번호 패턴 분석 차트 -->
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-puzzle-piece"></i> 번호 패턴 분석</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-pills mb-3" id="patterns-tab-100" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="consecutive-tab-100" data-bs-toggle="pill" data-bs-target="#consecutive-content-100" type="button" role="tab" aria-selected="true">연속번호</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="prime-tab-100" data-bs-toggle="pill" data-bs-target="#prime-content-100" type="button" role="tab" aria-selected="false">소수</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="multiple-tab-100" data-bs-toggle="pill" data-bs-target="#multiple-content-100" type="button" role="tab" aria-selected="false">배수</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="lastdigit-tab-100" data-bs-toggle="pill" data-bs-target="#lastdigit-content-100" type="button" role="tab" aria-selected="false">끝수</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="combination-tab-100" data-bs-toggle="pill" data-bs-target="#combination-content-100" type="button" role="tab" aria-selected="false">조합 패턴</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="patterns-tab-content-100">
+                        <!-- 연속번호 분석 -->
+                        <div class="tab-pane fade show active" id="consecutive-content-100" role="tabpanel">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="chart-container" id="consecutiveChart100">
+                                        <canvas id="consecutive-chart-recent100"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="alert alert-info">
+                                        <h6 class="alert-heading">연속번호 분석</h6>
+                                        <p>당첨 번호에서 연속된 숫자 쌍이 얼마나 자주 등장하는지 분석합니다.</p>
+                                        <p>예를 들어, [1, 2, 15, 23, 24, 45]에는 연속된 숫자 쌍이 2개 있습니다: (1-2), (23-24)</p>
+                                        <hr>
+                                        <p class="mb-0">최근 100회차에서는 <strong id="consecutive-trend-100">분석 중...</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 소수 분석 -->
+                        <div class="tab-pane fade" id="prime-content-100" role="tabpanel">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="chart-container" id="primeChart100">
+                                        <canvas id="prime-chart-recent100"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="alert alert-info">
+                                        <h6 class="alert-heading">소수 분석</h6>
+                                        <p>당첨 번호 중 소수(1과 자신으로만 나누어지는 수)의 분포를 분석합니다.</p>
+                                        <p>로또에서의 소수 번호: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43</p>
+                                        <hr>
+                                        <p class="mb-0">최근 100회차에서는 <strong id="prime-trend-100">분석 중...</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 배수 분석 -->
+                        <div class="tab-pane fade" id="multiple-content-100" role="tabpanel">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="chart-container" id="mult3Chart100">
+                                        <canvas id="mult3-chart-recent100"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="alert alert-info">
+                                        <h6 class="alert-heading">3의 배수 분석</h6>
+                                        <p>당첨 번호 중 3의 배수가 얼마나 포함되어 있는지 분석합니다.</p>
+                                        <p>로또에서 3의 배수: 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45</p>
+                                        <hr>
+                                        <p class="mb-0">최근 100회차에서는 <strong id="mult3-trend-100">분석 중...</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 끝수 분석 -->
+                        <div class="tab-pane fade" id="lastdigit-content-100" role="tabpanel">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="chart-container" id="lastDigitChart100">
+                                        <canvas id="lastdigit-chart-recent100"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="alert alert-info">
+                                        <h6 class="alert-heading">끝수 분석</h6>
+                                        <p>당첨 번호의 일의 자리(끝수) 분포를 분석합니다.</p>
+                                        <p>이상적으로는 0~9까지의 숫자가 균등하게 분포되어야 합니다.</p>
+                                        <hr>
+                                        <p class="mb-0">최근 100회차에서는 <strong id="lastdigit-trend-100">분석 중...</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 조합 패턴 분석 -->
+                        <div class="tab-pane fade" id="combination-content-100" role="tabpanel">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="chart-container" id="combinationChart100">
+                                        <canvas id="combination-chart-recent100"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="alert alert-info">
+                                        <h6 class="alert-heading">번호대별 조합 패턴</h6>
+                                        <p>당첨 번호가 각 번호대(1-10, 11-20 등)에서 몇 개씩 뽑히는지 분석합니다.</p>
+                                        <p>예: "21120" 패턴은 1-10에서 2개, 11-20에서 1개, 21-30에서 1개, 31-40에서 2개, 41-45에서 0개가 나왔다는 의미입니다.</p>
+                                        <hr>
+                                        <p class="mb-0">최근 100회차에서는 <strong id="combination-trend-100">분석 중...</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 최근 당첨 번호 목록 -->
+    <div class="row">
+        <div class="col-12 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-list-ol"></i> 최근 당첨 번호</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>회차</th>
+                                    <th>추첨일</th>
+                                    <th>당첨 번호</th>
+                                    <th>합계</th>
+                                    <th>AC값</th>
+                                    <th>홀짝</th>
+                                    <th>고저</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-draws-table-100">
+                                <tr>
+                                    <td colspan="7" class="text-center">로딩 중...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 통계 초기화 스크립트 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 패턴 분석 탭 초기화
+        const patternsTabs = document.getElementById('patterns-tab-100');
+        if (patternsTabs) {
+            const tabBtns = patternsTabs.querySelectorAll('[data-bs-toggle="pill"]');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('shown.bs.tab', function(e) {
+                    // 차트 리사이즈 트리거 (차트가 숨겨진 탭에 있을 때 크기 계산 오류 수정)
+                    window.dispatchEvent(new Event('resize'));
+                });
+            });
+        }
+
+        // 통계 데이터 로드 이벤트 리스너
+        document.addEventListener('tabDataLoaded', function(e) {
+            if (e.detail.tabId === '#tab-recent100') {
+                updateRecent100StatsUI(e.detail.data);
+            }
+        });
+
+        // 전체 회차와 비교 버튼 이벤트
+        document.getElementById('compare-recent100-all').addEventListener('click', function() {
+            // 비교 모달 또는 팝업 표시 로직
+            alert('전체 회차와 최근 100회차 비교 기능은 준비 중입니다.');
+        });
+
+        // 최근 100회차 통계 UI 업데이트
+        function updateRecent100StatsUI(data) {
+            if (!data) return;
+
+            // 요약 정보 업데이트
+            const summary = data.summary || {};
+            if (summary) {
+                document.getElementById('recent100-avg-sum').textContent = summary.avg_sum?.toFixed(1) || '--';
+                document.getElementById('recent100-avg-ac').textContent = summary.avg_ac?.toFixed(1) || '--';
+                document.getElementById('recent100-odd-even').textContent = summary.odd_even_ratio || '--';
+                document.getElementById('recent100-high-low').textContent = summary.high_low_ratio || '--';
+            }
+
+            // 빈도수 기준 상위 번호 찾기
+            const frequency = data.frequency || {};
+            if (frequency) {
+                const sortedNumbers = Object.entries(frequency)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5)
+                    .map(([num, count]) => ({ number: parseInt(num), count }));
+
+                if (sortedNumbers.length > 0) {
+                    document.getElementById('recent100-most-frequent').textContent =
+                        `${sortedNumbers[0].number}번 (${sortedNumbers[0].count}회)`;
+                }
+            }
+
+            // 당첨 번호 테이블 생성
+            const recentDrawsData = window.TabManager.getTabData('recent_100')?.recent_draws || [];
+            updateRecentDrawsTable(recentDrawsData, 'recent-draws-table-100');
+        }
+
+        // 당첨 번호 테이블 업데이트
+        function updateRecentDrawsTable(draws, tableId) {
+            const tableBody = document.getElementById(tableId);
+            if (!tableBody || !draws || !draws.length) return;
+
+            let html = '';
+
+            draws.forEach(draw => {
+                // 번호 정렬
+                const sortedNumbers = [...draw.numbers].sort((a, b) => a - b);
+
+                // 번호 HTML 생성
+                const numbersHtml = sortedNumbers.map(num => {
+                    return `<div class="ball mini ${formatUtils.getBallColorClass(num)}">${num}</div>`;
+                }).join('');
+
+                // 보너스 번호
+                const bonusHtml = draw.bonus ?
+                    `<div class="ball mini bonus ${formatUtils.getBallColorClass(draw.bonus)}">${draw.bonus}</div>` : '';
+
+                // 합계 계산
+                const sum = sortedNumbers.reduce((a, b) => a + b, 0);
+
+                // AC값 계산
+                const ac = calculateAC(sortedNumbers);
+
+                // 홀짝 비율
+                const oddCount = sortedNumbers.filter(n => n % 2 === 1).length;
+                const oddEven = `${oddCount}:${6-oddCount}`;
+
+                // 고저 비율 (기준: 23)
+                const highCount = sortedNumbers.filter(n => n >= 23).length;
+                const highLow = `${highCount}:${6-highCount}`;
+
+                // 날짜 포맷
+                const date = draw.draw_date ? new Date(draw.draw_date).toLocaleDateString() : '-';
+
+                // 행 추가
+                html += `
+                <tr>
+                    <td>${draw.draw_number}</td>
+                    <td>${date}</td>
+                    <td class="d-flex">${numbersHtml} ${bonusHtml}</td>
+                    <td>${sum}</td>
+                    <td>${ac}</td>
+                    <td>${oddEven}</td>
+                    <td>${highLow}</td>
+                </tr>
+                `;
+            });
+
+            tableBody.innerHTML = html;
+        }
+
+        // AC값 계산 함수
+        function calculateAC(numbers) {
+            const sorted = [...numbers].sort((a, b) => a - b);
+            const diffs = new Set();
+
+            for (let i = 0; i < sorted.length; i++) {
+                for (let j = i + 1; j < sorted.length; j++) {
+                    diffs.add(sorted[j] - sorted[i]);
+                }
+            }
+
+            return diffs.size - 5;
+        }
+    });
+</script>
