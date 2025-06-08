@@ -13,53 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
         gradient: ['rgba(65, 88, 208, 0.8)', 'rgba(200, 80, 192, 0.8)', 'rgba(255, 204, 112, 0.8)']
     };
 
-    // 로딩 표시
-    const statsLoading = document.getElementById('statsLoading');
-    const statsError = document.getElementById('statsError');
-    const statsContent = document.getElementById('statsContent');
-
-    // 타임아웃 설정
-    let statsTimeout = setTimeout(function() {
-        statsLoading.style.display = 'none';
-        statsError.classList.remove('d-none');
-        console.error('통계 데이터 로딩 타임아웃');
-    }, 10000); // 10초 타임아웃
-
-    // DB에서 통계 데이터 가져오기
-    fetch('/stats')
-        .then(response => response.json())
-        .then(data => {
-            // 타임아웃 취소
-            clearTimeout(statsTimeout);
-
-            if (data.success) {
-                const stats = data.stats;
-                statsLoading.style.display = 'none';
-                statsContent.classList.remove('d-none');
-                initializeCharts(stats);
-                displayRecentDraws(stats.recent_draws);
-            } else {
-                statsLoading.style.display = 'none';
-                statsError.classList.remove('d-none');
-                console.error('통계 데이터를 불러오지 못했습니다:', data.error);
-            }
-        })
-        .catch(error => {
-            // 타임아웃 취소
-            clearTimeout(statsTimeout);
-
-            statsLoading.style.display = 'none';
-            statsError.classList.remove('d-none');
-            console.error('통계 데이터 요청 중 오류 발생:', error);
-        });
-
-    // 재시도 버튼 이벤트
-    const retryStatsBtn = document.getElementById('retryStatsBtn');
-    if (retryStatsBtn) {
-        retryStatsBtn.addEventListener('click', function() {
-            location.reload();
-        });
-    }
+    // 통계 데이터 로드 상태 관리
+    let statsLoaded = false;
+    let statsLoadAttempts = 0;
+    const maxLoadAttempts = 3;
 
     // 공통 차트 설정
     Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
@@ -73,44 +30,197 @@ document.addEventListener('DOMContentLoaded', function() {
         Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
     }
 
-    // DB에서 통계 데이터 가져오기
-    fetch('/stats')
-        .then(response => response.json())
+    // 통계 탭 활성화 감지
+    document.addEventListener('tabActivated', function(e) {
+        if (e.detail && e.detail.tabId === 'stats' && !statsLoaded) {
+            loadStatsData();
+        }
+    });
+
+    // 메뉴 아이템 클릭 감지
+    const menuItems = document.querySelectorAll('.menu-items li');
+    menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            if (tabId === 'stats' && !statsLoaded) {
+                setTimeout(loadStatsData, 100); // 탭 전환 후 로드
+            }
+        });
+    });
+
+    // 초기 로드 시 메인 탭의 차트만 로드
+    if (document.querySelector('.tab-content#main.active')) {
+        loadMainTabCharts();
+    }
+
+    // 메인 탭 차트 로드
+    function loadMainTabCharts() {
+        fetch('/stats')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const stats = data.stats;
+                    createNumberFrequencyChart(stats.frequency);
+                    createOddEvenChart(stats.odd_even);
+                    createNumberDistributionChart(stats.frequency);
+                }
+            })
+            .catch(error => {
+                console.error('메인 탭 통계 로드 실패:', error);
+            });
+    }
+
+    // 통계 데이터 로드 함수
+    function loadStatsData() {
+        if (statsLoaded || statsLoadAttempts >= maxLoadAttempts) return;
+
+        statsLoadAttempts++;
+
+        const statsLoading = document.getElementById('statsLoading');
+        const statsError = document.getElementById('statsError');
+        const statsContent = document.getElementById('statsContent');
+
+        // 요소가 없으면 중단
+        if (!statsLoading || !statsError || !statsContent) {
+            console.error('통계 탭 요소를 찾을 수 없습니다.');
+            return;
+        }
+
+        // 로딩 표시
+        statsLoading.style.display = 'block';
+        statsError.classList.add('d-none');
+        statsContent.classList.add('d-none');
+
+        // 타임아웃 설정
+        const statsTimeout = setTimeout(function() {
+            statsLoading.style.display = 'none';
+            statsError.classList.remove('d-none');
+            console.error('통계 데이터 로딩 타임아웃');
+        }, 15000); // 15초로 증가
+
+        // DB에서 통계 데이터 가져오기
+        fetch('/stats', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답 오류');
+            }
+            return response.json();
+        })
         .then(data => {
+            // 타임아웃 취소
+            clearTimeout(statsTimeout);
+
             if (data.success) {
+                statsLoaded = true;
                 const stats = data.stats;
-                initializeCharts(stats);
-                displayRecentDraws(stats.recent_draws);
+                statsLoading.style.display = 'none';
+                statsContent.classList.remove('d-none');
+
+                // 차트 초기화 전 대기
+                setTimeout(() => {
+                    initializeStatsCharts(stats);
+                    displayRecentDraws(stats.recent_draws);
+                    updateStatsSummary(stats);
+                }, 100);
             } else {
-                console.error('통계 데이터를 불러오지 못했습니다:', data.error);
+                throw new Error(data.error || '통계 데이터 로드 실패');
             }
         })
         .catch(error => {
-            console.error('통계 데이터 요청 중 오류 발생:', error);
+            clearTimeout(statsTimeout);
+            statsLoading.style.display = 'none';
+            statsError.classList.remove('d-none');
+            console.error('통계 데이터 요청 중 오류:', error);
         });
+    }
 
-    // 모든 차트 초기화
-    function initializeCharts(stats) {
-        createNumberFrequencyChart(stats.frequency);
-        createOddEvenChart(stats.odd_even);
-        createNumberDistributionChart(stats.frequency);
-        createOddEvenDistChart(stats.odd_even);
-        createHighLowDistChart(stats.high_low);
-        createAcValueChart(stats.ac_value);
-        createSumTrendChart(stats.sum_trend);
+    // 재시도 버튼 이벤트
+    const retryStatsBtn = document.getElementById('retryStatsBtn');
+    if (retryStatsBtn) {
+        retryStatsBtn.addEventListener('click', function() {
+            statsLoadAttempts = 0; // 재시도 카운트 리셋
+            statsLoaded = false;
+            loadStatsData();
+        });
+    }
 
-        // 도움말 탭의 차트들
-        createSumRangeHelpChart();
-        createOddEvenHelpChart(stats.odd_even);
+    // 통계 탭 차트 초기화
+    function initializeStatsCharts(stats) {
+        try {
+            // 통계 탭 전용 차트
+            createOddEvenDistChart(stats.odd_even);
+            createHighLowDistChart(stats.high_low);
+            createAcValueChart(stats.ac_value);
+            createSumTrendChart(stats.sum_trend);
+            createNumberFrequencyChartFull(stats.frequency);
 
-        // 전체 번호 빈도 차트 (통계 탭)
-        createNumberFrequencyChartFull(stats.frequency);
+            // 도움말 탭 차트
+            createSumRangeHelpChart();
+            createOddEvenHelpChart(stats.odd_even);
+        } catch (error) {
+            console.error('차트 초기화 중 오류:', error);
+        }
+    }
+
+    // 통계 요약 정보 업데이트
+    function updateStatsSummary(stats) {
+        try {
+            // 홀짝 비율 평균 계산
+            const oddEvenAvg = calculateOddEvenAverage(stats.odd_even);
+            const oddEvenElement = document.getElementById('oddEvenRatioAvg');
+            if (oddEvenElement) oddEvenElement.textContent = oddEvenAvg;
+
+            // 최다 출현 홀짝 패턴
+            const topOddEven = getTopPattern(stats.odd_even);
+            const topOddEvenElement = document.getElementById('topOddEvenPattern');
+            if (topOddEvenElement) topOddEvenElement.textContent = topOddEven;
+
+            // 고저 비율 평균 계산
+            const highLowAvg = calculateHighLowAverage(stats.high_low);
+            const highLowElement = document.getElementById('highLowRatioAvg');
+            if (highLowElement) highLowElement.textContent = highLowAvg;
+
+            // 최다 출현 고저 패턴
+            const topHighLow = getTopPattern(stats.high_low);
+            const topHighLowElement = document.getElementById('topHighLowPattern');
+            if (topHighLowElement) topHighLowElement.textContent = topHighLow;
+
+            // 연속번호 통계
+            const consecutiveElement = document.getElementById('consecutiveStats');
+            if (consecutiveElement && stats.consecutive_pairs) {
+                const topConsecutive = getTopConsecutivePattern(stats.consecutive_pairs);
+                consecutiveElement.textContent = topConsecutive;
+            }
+
+            // 평균 AC값
+            const avgAcElement = document.getElementById('avgAcValue');
+            if (avgAcElement) {
+                const avgAc = calculateAverageAC(stats.ac_value);
+                avgAcElement.textContent = avgAc;
+            }
+
+            // 번호별 순위
+            updateNumberRankings(stats.frequency);
+
+            // 최신 회차 정보
+            const latestDrawElement = document.getElementById('latestDrawNumber');
+            const latestDateElement = document.getElementById('latestDrawDate');
+            if (latestDrawElement) latestDrawElement.textContent = stats.latest_draw;
+            if (latestDateElement) latestDateElement.textContent = new Date().toLocaleDateString('ko-KR');
+        } catch (error) {
+            console.error('통계 요약 업데이트 중 오류:', error);
+        }
     }
 
     // 최근 당첨번호 표시
     function displayRecentDraws(recentDraws) {
         const container = document.querySelector('.recent-draws');
-        if (!container) return;
+        if (!container || !recentDraws) return;
 
         container.innerHTML = '';
 
@@ -128,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 정렬된 당첨번호 볼 생성
             draw.numbers.forEach(num => {
                 const ball = document.createElement('div');
-                ball.className = 'number-ball';
+                ball.className = 'number-ball mini';
 
                 // 번호에 따른 색상 지정
                 if (num <= 10) ball.classList.add('ball-yellow');
@@ -147,10 +257,108 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // 헬퍼 함수들
+    function calculateOddEvenAverage(oddEvenStats) {
+        let totalOdd = 0;
+        let totalCount = 0;
+
+        for (let i = 0; i < oddEvenStats.counts.length; i++) {
+            totalOdd += i * oddEvenStats.counts[i];
+            totalCount += oddEvenStats.counts[i];
+        }
+
+        const avgOdd = (totalOdd / totalCount).toFixed(1);
+        const avgEven = (6 - avgOdd).toFixed(1);
+        return `홀수 ${avgOdd}개, 짝수 ${avgEven}개`;
+    }
+
+    function calculateHighLowAverage(highLowStats) {
+        let totalHigh = 0;
+        let totalCount = 0;
+
+        for (let i = 0; i < highLowStats.counts.length; i++) {
+            totalHigh += i * highLowStats.counts[i];
+            totalCount += highLowStats.counts[i];
+        }
+
+        const avgHigh = (totalHigh / totalCount).toFixed(1);
+        const avgLow = (6 - avgHigh).toFixed(1);
+        return `고 ${avgHigh}개, 저 ${avgLow}개`;
+    }
+
+    function getTopPattern(stats) {
+        const maxIndex = stats.counts.indexOf(Math.max(...stats.counts));
+        return stats.labels[maxIndex] + ` (${stats.percentages[maxIndex]}%)`;
+    }
+
+    function getTopConsecutivePattern(consecutiveStats) {
+        const maxIndex = consecutiveStats.counts.indexOf(Math.max(...consecutiveStats.counts));
+        return consecutiveStats.labels[maxIndex] + ` (${consecutiveStats.percentages[maxIndex]}%)`;
+    }
+
+    function calculateAverageAC(acStats) {
+        let totalAC = 0;
+        let totalCount = 0;
+
+        for (let i = 0; i < acStats.counts.length; i++) {
+            totalAC += i * acStats.counts[i];
+            totalCount += acStats.counts[i];
+        }
+
+        return (totalAC / totalCount).toFixed(1);
+    }
+
+    function updateNumberRankings(frequency) {
+        // 번호별 빈도를 배열로 변환
+        const numberArray = Object.entries(frequency).map(([num, freq]) => ({
+            number: parseInt(num),
+            frequency: freq
+        }));
+
+        // 빈도순 정렬
+        numberArray.sort((a, b) => b.frequency - a.frequency);
+
+        // 가장 많이 당첨된 번호 TOP 5
+        const mostFrequent = document.getElementById('mostFrequentNumbers');
+        if (mostFrequent) {
+            mostFrequent.innerHTML = '';
+            numberArray.slice(0, 5).forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="number-ball mini ball-${getColorClass(item.number)}">${item.number}</span> ${item.frequency}회`;
+                mostFrequent.appendChild(li);
+            });
+        }
+
+        // 가장 적게 당첨된 번호 TOP 5
+        const leastFrequent = document.getElementById('leastFrequentNumbers');
+        if (leastFrequent) {
+            leastFrequent.innerHTML = '';
+            numberArray.slice(-5).reverse().forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="number-ball mini ball-${getColorClass(item.number)}">${item.number}</span> ${item.frequency}회`;
+                leastFrequent.appendChild(li);
+            });
+        }
+    }
+
+    function getColorClass(num) {
+        if (num <= 10) return 'yellow';
+        else if (num <= 20) return 'blue';
+        else if (num <= 30) return 'red';
+        else if (num <= 40) return 'gray';
+        else return 'green';
+    }
+
+    // === 차트 생성 함수들 ===
+
     // 미니 번호 출현 빈도 차트
     function createNumberFrequencyChart(frequencyData) {
         const ctx = document.getElementById('numberFrequencyChart');
         if (!ctx) return;
+
+        // 기존 차트가 있으면 제거
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) existingChart.destroy();
 
         // 출현 빈도가 높은 상위 10개 번호 추출
         const numbers = Object.keys(frequencyData).map(Number);
@@ -220,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 상위 5개 번호만 표시
             topNumbers.slice(0, 5).forEach(num => {
                 const ball = document.createElement('div');
-                ball.className = 'number-ball';
+                ball.className = 'number-ball mini';
 
                 // 번호에 따른 색상 지정
                 if (num <= 10) ball.classList.add('ball-yellow');
@@ -239,6 +447,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function createOddEvenChart(oddEvenStats) {
         const ctx = document.getElementById('oddEvenChart');
         if (!ctx) return;
+
+        // 기존 차트가 있으면 제거
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) existingChart.destroy();
 
         // 전체 홀수/짝수 비율 계산
         let oddCount = 0;
@@ -289,6 +501,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function createNumberDistributionChart(frequencyData) {
         const ctx = document.getElementById('numberDistributionChart');
         if (!ctx) return;
+
+        // 기존 차트가 있으면 제거
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) existingChart.destroy();
 
         const labels = Object.keys(frequencyData).map(Number).sort((a, b) => a - b);
         const data = labels.map(num => frequencyData[num]);
@@ -358,6 +574,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function createNumberFrequencyChartFull(frequencyData) {
         const ctx = document.getElementById('numberFrequencyChartFull');
         if (!ctx) return;
+
+        // 기존 차트가 있으면 제거
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) existingChart.destroy();
 
         const labels = Object.keys(frequencyData).map(Number).sort((a, b) => a - b);
         const data = labels.map(num => frequencyData[num]);
@@ -438,6 +658,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('oddEvenDistChart');
         if (!ctx) return;
 
+        // 기존 차트가 있으면 제거
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) existingChart.destroy();
+
         new Chart(ctx, {
             type: 'bar',
             data: {
@@ -497,6 +721,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('highLowDistChart');
         if (!ctx) return;
 
+        // 기존 차트가 있으면 제거
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) existingChart.destroy();
+
         new Chart(ctx, {
             type: 'bar',
             data: {
@@ -555,6 +783,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('acValueChart');
         if (!ctx) return;
 
+        // 기존 차트가 있으면 제거
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) existingChart.destroy();
+
         new Chart(ctx, {
             type: 'bar',
             data: {
@@ -604,6 +836,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('sumTrendChart');
         if (!ctx) return;
 
+        // 기존 차트가 있으면 제거
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) existingChart.destroy();
+
         // 최근 15회 당첨번호 총합
         const labels = sumTrendData.map(item => `${item.draw_number}회`);
         const data = sumTrendData.map(item => item.sum);
@@ -633,26 +869,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: {
                     legend: {
                         display: false
-                    },
-                    annotation: {
-                        annotations: {
-                            line1: {
-                                type: 'line',
-                                yMin: 100,
-                                yMax: 100,
-                                borderColor: 'rgba(220, 53, 69, 0.5)',
-                                borderWidth: 1,
-                                borderDash: [5, 5]
-                            },
-                            line2: {
-                                type: 'line',
-                                yMin: 175,
-                                yMax: 175,
-                                borderColor: 'rgba(220, 53, 69, 0.5)',
-                                borderWidth: 1,
-                                borderDash: [5, 5]
-                            }
-                        }
                     }
                 },
                 scales: {
@@ -672,6 +888,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function createSumRangeHelpChart() {
         const ctx = document.getElementById('sumRangeHelpChart');
         if (!ctx) return;
+
+        // 기존 차트가 있으면 제거
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) existingChart.destroy();
 
         // 총합 분포 곡선 (샘플 데이터)
         const data = [0, 2, 4, 8, 15, 25, 38, 50, 65, 78, 85, 90, 92, 88, 82, 73, 63, 50, 38, 25, 15, 8, 4, 1, 0];
@@ -730,6 +950,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function createOddEvenHelpChart(oddEvenStats) {
         const ctx = document.getElementById('oddEvenHelpChart');
         if (!ctx) return;
+
+        // 기존 차트가 있으면 제거
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) existingChart.destroy();
 
         new Chart(ctx, {
             type: 'bar',

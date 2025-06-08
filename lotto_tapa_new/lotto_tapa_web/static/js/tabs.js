@@ -36,6 +36,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // URL 해시 업데이트
         window.location.hash = tabId;
+
+        // 탭 활성화 이벤트 발생
+        const event = new CustomEvent('tabActivated', { detail: { tabId: tabId } });
+        document.dispatchEvent(event);
     };
 
     // 초기 탭 설정

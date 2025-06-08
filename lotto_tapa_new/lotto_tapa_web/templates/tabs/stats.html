@@ -5,122 +5,154 @@
             <h5><i class="fa-solid fa-chart-line"></i> 통계 분석</h5>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="stat-section">
-                        <h5>번호별 출현 빈도</h5>
-                        <canvas id="numberFrequencyChartFull" height="250"></canvas>
+            <!-- 로딩 상태 추가 -->
+            <div id="statsLoading" class="stats-loading">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">로딩 중...</span>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="stat-section">
-                        <h5>최근 10회차 당첨번호 분포</h5>
-                        <div class="recent-draws">
-                            <!-- 자바스크립트에서 동적으로 생성됨 -->
-                        </div>
-                    </div>
+                    <p class="mt-3">통계 데이터를 불러오는 중입니다...</p>
                 </div>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-md-4">
-                    <div class="stat-section">
-                        <h5>홀짝 비율 분포</h5>
-                        <canvas id="oddEvenDistChart" height="200"></canvas>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stat-section">
-                        <h5>고저 비율 분포</h5>
-                        <canvas id="highLowDistChart" height="200"></canvas>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stat-section">
-                        <h5>AC값 분포</h5>
-                        <canvas id="acValueChart" height="200"></canvas>
-                    </div>
-                </div>
+            <!-- 에러 상태 추가 -->
+            <div id="statsError" class="alert alert-danger d-none">
+                <i class="fa-solid fa-exclamation-triangle me-2"></i>
+                통계 데이터를 불러오는데 실패했습니다.
+                <button id="retryStatsBtn" class="btn btn-sm btn-danger ms-2">
+                    <i class="fa-solid fa-rotate"></i> 다시 시도
+                </button>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="stat-section">
-                        <h5>당첨번호 총합 추이</h5>
-                        <canvas id="sumTrendChart" height="200"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="fa-solid fa-chart-pie"></i> 당첨 번호 특성 분석</h5>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>특성</th>
-                                        <th>분석 결과</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>홀짝 비율 평균</td>
-                                        <td id="oddEvenRatioAvg">로딩 중...</td>
-                                    </tr>
-                                    <tr>
-                                        <td>최다 출현 홀짝 패턴</td>
-                                        <td id="topOddEvenPattern">로딩 중...</td>
-                                    </tr>
-                                    <tr>
-                                        <td>고저 비율 평균</td>
-                                        <td id="highLowRatioAvg">로딩 중...</td>
-                                    </tr>
-                                    <tr>
-                                        <td>최다 출현 고저 패턴</td>
-                                        <td id="topHighLowPattern">로딩 중...</td>
-                                    </tr>
-                                    <tr>
-                                        <td>연속번호 패턴</td>
-                                        <td id="consecutiveStats">로딩 중...</td>
-                                    </tr>
-                                    <tr>
-                                        <td>평균 AC값</td>
-                                        <td id="avgAcValue">로딩 중...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><i class="fa-solid fa-trophy"></i> 번호별 순위</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>가장 많이 당첨된 번호</h6>
-                                    <ol id="mostFrequentNumbers" class="number-rank-list">
-                                        <li>로딩 중...</li>
-                                    </ol>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>가장 적게 당첨된 번호</h6>
-                                    <ol id="leastFrequentNumbers" class="number-rank-list">
-                                        <li>로딩 중...</li>
-                                    </ol>
-                                </div>
+            <!-- 실제 통계 컨텐츠 -->
+            <div id="statsContent" class="d-none">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="stat-section">
+                            <h5>번호별 출현 빈도</h5>
+                            <div class="chart-container" style="height: 250px;">
+                                <canvas id="numberFrequencyChartFull"></canvas>
                             </div>
-                            <div class="mt-4">
-                                <h6>최근 당첨 기간</h6>
-                                <p id="latestDrawInfo">최신 <span id="latestDrawNumber">-</span>회 (<span id="latestDrawDate">-</span>)</p>
-                                <div class="alert alert-info">
-                                    <small>매주 일요일에 데이터가 자동으로 업데이트됩니다.</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stat-section">
+                            <h5>최근 10회차 당첨번호 분포</h5>
+                            <div class="recent-draws">
+                                <!-- 자바스크립트에서 동적으로 생성됨 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="stat-section">
+                            <h5>홀짝 비율 분포</h5>
+                            <div class="chart-container" style="height: 200px;">
+                                <canvas id="oddEvenDistChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-section">
+                            <h5>고저 비율 분포</h5>
+                            <div class="chart-container" style="height: 200px;">
+                                <canvas id="highLowDistChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-section">
+                            <h5>AC값 분포</h5>
+                            <div class="chart-container" style="height: 200px;">
+                                <canvas id="acValueChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="stat-section">
+                            <h5>당첨번호 총합 추이</h5>
+                            <div class="chart-container" style="height: 200px;">
+                                <canvas id="sumTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fa-solid fa-chart-pie"></i> 당첨 번호 특성 분석</h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>특성</th>
+                                            <th>분석 결과</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>홀짝 비율 평균</td>
+                                            <td id="oddEvenRatioAvg">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>최다 출현 홀짝 패턴</td>
+                                            <td id="topOddEvenPattern">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>고저 비율 평균</td>
+                                            <td id="highLowRatioAvg">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>최다 출현 고저 패턴</td>
+                                            <td id="topHighLowPattern">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>연속번호 패턴</td>
+                                            <td id="consecutiveStats">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>평균 AC값</td>
+                                            <td id="avgAcValue">-</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fa-solid fa-trophy"></i> 번호별 순위</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>가장 많이 당첨된 번호</h6>
+                                        <ol id="mostFrequentNumbers" class="number-rank-list">
+                                            <li>-</li>
+                                        </ol>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>가장 적게 당첨된 번호</h6>
+                                        <ol id="leastFrequentNumbers" class="number-rank-list">
+                                            <li>-</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <h6>최근 당첨 기간</h6>
+                                    <p id="latestDrawInfo">최신 <span id="latestDrawNumber">-</span>회 (<span id="latestDrawDate">-</span>)</p>
+                                    <div class="alert alert-info">
+                                        <small>매주 일요일에 데이터가 자동으로 업데이트됩니다.</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
