@@ -22,7 +22,9 @@
                                         <input type="number" class="form-control" id="gamesCount" name="games_count" min="1" max="20" value="5">
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fa-solid fa-bolt"></i> 번호 생성</button>
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fa-solid fa-bolt"></i> 번호 생성
+                                </button>
                             </form>
                         </div>
                         <div class="col-md-4">
@@ -53,20 +55,35 @@
                         <h5>생성 결과</h5>
                         <div id="generationTime" class="text-muted mb-2"></div>
                         <div id="resultContainer" class="result-container">
-                            <p class="text-center text-muted">번호를 생성하면 여기에 표시됩니다.</p>
+                            <!-- 초기 안내 메시지 -->
+                            <div class="initial-message text-center py-4">
+                                <div class="mb-3">
+                                    <i class="fa-solid fa-magic text-primary" style="font-size: 3rem;"></i>
+                                </div>
+                                <h6 class="mb-2">번호 생성을 시작해보세요!</h6>
+                                <p class="text-muted mb-3">12가지 과학적 규칙을 바탕으로 최적의 로또 번호를 생성합니다.</p>
 
-                            <!-- 초기 샘플 결과 (사용자 경험 향상을 위해) -->
-                            <div class="sample-result">
-                                <div class="game-row sample">
-                                    <div class="game-info">예시:</div>
-                                    <div class="game-balls">
-                                        <div class="number-ball ball-yellow">7</div>
-                                        <div class="number-ball ball-blue">15</div>
-                                        <div class="number-ball ball-red">23</div>
-                                        <div class="number-ball ball-red">28</div>
-                                        <div class="number-ball ball-gray">36</div>
-                                        <div class="number-ball ball-green">42</div>
+                                <!-- 샘플 결과 표시 -->
+                                <div class="sample-preview">
+                                    <p class="small text-muted mb-2"><i class="fa-solid fa-eye"></i> 생성 결과 미리보기:</p>
+                                    <div class="game-row sample-demo">
+                                        <div class="game-info">예시</div>
+                                        <div class="game-balls">
+                                            <div class="number-ball ball-yellow">7</div>
+                                            <div class="number-ball ball-blue">15</div>
+                                            <div class="number-ball ball-red">23</div>
+                                            <div class="number-ball ball-red">28</div>
+                                            <div class="number-ball ball-gray">36</div>
+                                            <div class="number-ball ball-green">42</div>
+                                        </div>
                                     </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        <i class="fa-solid fa-lightbulb"></i>
+                                        위 버튼을 클릭하여 나만의 행운 번호를 생성해보세요!
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -83,11 +100,12 @@
                     <div class="stat-item">
                         <span>최근 출현 빈도 TOP 5</span>
                         <div class="number-freq">
-                            <div class="number-ball ball-yellow">7</div>
-                            <div class="number-ball ball-blue">12</div>
-                            <div class="number-ball ball-red">25</div>
-                            <div class="number-ball ball-gray">34</div>
-                            <div class="number-ball ball-green">43</div>
+                            <!-- 기본 샘플 데이터 -->
+                            <div class="number-ball mini ball-yellow">7</div>
+                            <div class="number-ball mini ball-blue">12</div>
+                            <div class="number-ball mini ball-red">25</div>
+                            <div class="number-ball mini ball-gray">34</div>
+                            <div class="number-ball mini ball-green">43</div>
                         </div>
                     </div>
                     <div class="stat-chart mt-3">
@@ -114,26 +132,77 @@
                 </div>
                 <div class="card-body">
                     <div class="latest-draw">
+                        {% if recent_draw %}
                         <div class="latest-draw-number">
-                            <span id="latestDrawNo">{{ recent_draw.draw_number }}</span>회
-                            <!-- 날짜 형식은 적절히 조정 필요 -->
+                            <span id="latestDrawNo">{{ recent_draw.draw_number }}</span>회차
                         </div>
                         <div class="latest-draw-balls">
                             {% for num in recent_draw.numbers %}
                                 {% if num <= 10 %}
-                                    <div class="number-ball ball-yellow">{{ num }}</div>
+                                    <div class="number-ball mini ball-yellow">{{ num }}</div>
                                 {% elif num <= 20 %}
-                                    <div class="number-ball ball-blue">{{ num }}</div>
+                                    <div class="number-ball mini ball-blue">{{ num }}</div>
                                 {% elif num <= 30 %}
-                                    <div class="number-ball ball-red">{{ num }}</div>
+                                    <div class="number-ball mini ball-red">{{ num }}</div>
                                 {% elif num <= 40 %}
-                                    <div class="number-ball ball-gray">{{ num }}</div>
+                                    <div class="number-ball mini ball-gray">{{ num }}</div>
                                 {% else %}
-                                    <div class="number-ball ball-green">{{ num }}</div>
+                                    <div class="number-ball mini ball-green">{{ num }}</div>
                                 {% endif %}
                             {% endfor %}
-                            <div class="number-ball bonus">{{ recent_draw.bonus }}</div>
+                            <div class="number-ball mini bonus">{{ recent_draw.bonus }}</div>
                         </div>
+                        {% else %}
+                        <!-- 데이터가 없을 때 샘플 표시 -->
+                        <div class="latest-draw-number">
+                            <span class="text-muted">최신 회차</span>
+                        </div>
+                        <div class="latest-draw-balls">
+                            <div class="number-ball mini ball-yellow">3</div>
+                            <div class="number-ball mini ball-blue">12</div>
+                            <div class="number-ball mini ball-red">21</div>
+                            <div class="number-ball mini ball-red">28</div>
+                            <div class="number-ball mini ball-gray">35</div>
+                            <div class="number-ball mini ball-green">44</div>
+                            <div class="number-ball mini bonus">17</div>
+                        </div>
+                        <small class="text-muted mt-2 d-block">
+                            <i class="fa-solid fa-info-circle"></i>
+                            실제 데이터는 데이터베이스 연결 후 표시됩니다.
+                        </small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 빠른 분석 정보 -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fa-solid fa-chart-line"></i> 빠른 분석</h5>
+                </div>
+                <div class="card-body">
+                    <div class="quick-stats">
+                        <div class="stat-row d-flex justify-content-between mb-2">
+                            <span class="small">권장 총합 구간:</span>
+                            <span class="badge bg-primary">100-175</span>
+                        </div>
+                        <div class="stat-row d-flex justify-content-between mb-2">
+                            <span class="small">권장 AC값:</span>
+                            <span class="badge bg-success">7 이상</span>
+                        </div>
+                        <div class="stat-row d-flex justify-content-between mb-2">
+                            <span class="small">권장 홀짝비율:</span>
+                            <span class="badge bg-info">3:3, 4:2</span>
+                        </div>
+                        <div class="stat-row d-flex justify-content-between">
+                            <span class="small">권장 고저비율:</span>
+                            <span class="badge bg-warning">3:3, 4:2</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                        <a href="#help" class="btn btn-sm btn-outline-secondary" data-tab-link="help">
+                            <i class="fa-solid fa-question-circle"></i> 자세한 분석 정보
+                        </a>
                     </div>
                 </div>
             </div>
@@ -147,9 +216,72 @@
                     <h5><i class="fa-solid fa-chart-pie"></i> 로또 번호 분포 분석</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="numberDistributionChart" height="150"></canvas>
+                    <div class="chart-loading text-center py-3" id="distributionChartLoading">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                            <span class="visually-hidden">차트 로딩 중...</span>
+                        </div>
+                        <span class="ms-2 small text-muted">차트를 불러오는 중입니다...</span>
+                    </div>
+                    <canvas id="numberDistributionChart" height="150" style="display: none;"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+/* 메인 탭 추가 스타일 */
+.sample-demo {
+    opacity: 0.8;
+    transform: scale(0.95);
+    transition: all 0.3s ease;
+}
+
+.sample-demo:hover {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.initial-message {
+    border: 2px dashed #e9ecef;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(65, 88, 208, 0.05) 0%, rgba(200, 80, 192, 0.05) 100%);
+}
+
+.sample-preview {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.quick-stats .stat-row {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.quick-stats .stat-row:last-child {
+    border-bottom: none;
+}
+
+.chart-loading {
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 다크 모드 대응 */
+.dark-mode .initial-message {
+    border-color: #374151;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+}
+
+.dark-mode .sample-preview {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .quick-stats .stat-row {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+</style>

@@ -110,21 +110,53 @@
     {% block extra_js %}{% endblock %}
     <script>
         // 사이드바 토글 기능
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.querySelector('.side-menu').classList.toggle('expanded');
-            document.querySelector('.main-content').classList.toggle('sidebar-expanded');
-        });
-
-        // 서비스 워커 등록 (오프라인 기능 지원)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('{{ url_for("static", filename="js/service-worker.js") }}').then(function(registration) {
-                    console.log('ServiceWorker 등록 성공:', registration.scope);
-                }, function(err) {
-                    console.log('ServiceWorker 등록 실패:', err);
-                });
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                document.querySelector('.side-menu').classList.toggle('expanded');
+                document.querySelector('.main-content').classList.toggle('sidebar-expanded');
             });
         }
+
+        // 서비스 워커 등록 (수정됨)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // 서비스 워커 파일 존재 여부 확인 후 등록
+                fetch('/static/js/service-worker.js')
+                    .then(response => {
+                        if (response.ok) {
+                            return navigator.serviceWorker.register('/static/js/service-worker.js');
+                        } else {
+                            console.log('서비스 워커 파일이 없습니다. 오프라인 기능이 비활성화됩니다.');
+                            return null;
+                        }
+                    })
+                    .then(registration => {
+                        if (registration) {
+                            console.log('ServiceWorker 등록 성공:', registration.scope);
+                        }
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker 등록 실패:', err);
+                        // 서비스 워커 없이도 정상 작동하도록 함
+                    });
+            });
+        }
+
+        // 에러 핸들링 개선
+        window.addEventListener('error', function(e) {
+            console.error('전역 오류 발생:', e.error);
+            // 사용자에게 친화적인 오류 메시지 표시 (선택적)
+        });
+
+        // 차트 초기화 실패 대비
+        window.addEventListener('unhandledrejection', function(e) {
+            console.warn('처리되지 않은 Promise 거부:', e.reason);
+            // 차트 관련 오류는 조용히 처리
+            if (e.reason && e.reason.toString().includes('chart')) {
+                e.preventDefault();
+            }
+        });
     </script>
 </body>
 </html>
